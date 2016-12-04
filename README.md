@@ -1,2 +1,1 @@
-# breakout
-C++/OpenGL implementation of a classic arcade game "Breakout"
+Inspired by [this](http://www.learnopengl.com/#!In-Practice/2D-Game/Breakout)
