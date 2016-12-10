@@ -2,6 +2,9 @@
 #include <GL/glew.h>
 #include "WindowManager.h"
 #include "Window.h"
+#include "ShaderProgram.h"
+#include "Shader.h"
+#include "ShaderType.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <cstdlib>
@@ -53,24 +56,10 @@ int main(int argc, char* argv[]) {
         "color = vec4(0.f, 0.75f, 1.f, 1.f);\n"
     "}\n\0";
 
-    GLuint vertexShader;
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
-    glCompileShader(vertexShader);
-
-    GLuint fragmentShader;
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
-    glCompileShader(fragmentShader);
-
-    GLuint shaderProgram;
-    shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+    ShaderProgram shader(
+        Shader(ShaderType::VERTEX, vertexShaderSource),
+        Shader(ShaderType::FRAGMENT, fragmentShaderSource)
+    );
 
     while(!window->isClosing()) {
         glfwPollEvents();
@@ -79,7 +68,7 @@ int main(int argc, char* argv[]) {
         glClear(GL_COLOR_BUFFER_BIT);
 
         // Draw triangle
-        glUseProgram(shaderProgram);
+        shader.use();
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
         glBindVertexArray(0);
@@ -88,7 +77,6 @@ int main(int argc, char* argv[]) {
     }
 
     // Clean up all the resources
-    glDeleteProgram(shaderProgram);
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
 

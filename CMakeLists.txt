@@ -5,7 +5,7 @@ find_package(OpenGL REQUIRED)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -static")
 
-set(SOURCES src/main.cpp src/WindowManager.cpp src/WindowManager.h src/Window.cpp src/Window.h)
+set(SOURCES src/main.cpp src/WindowManager.cpp src/WindowManager.h src/Window.cpp src/Window.h src/Shader.cpp src/Shader.h src/ShaderType.h src/ShaderProgram.cpp src/ShaderProgram.h)
 
 # GLFW build configuration
 
