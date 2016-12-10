@@ -1,41 +1,22 @@
+// glew header must be included before glfw header
 #include <GL/glew.h>
+#include "WindowManager.h"
+#include "Window.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <cstdlib>
 
+WindowManager& windowManager = WindowManager::Instance();
+
+const int WIDTH = 800;
+const int HEIGHT = 600;
+
 int main(int argc, char* argv[]) {
-    // Setup error handling
-    glfwSetErrorCallback([](int errorCode, const char* description) -> void {
-        std::cerr << description << std::endl;
-    });
-
-    if (!glfwInit()) {
-        std::cerr << "Failed to initialize GLFW" << std::endl;
-        return EXIT_FAILURE;
-    }
-
-    glfwDefaultWindowHints();
-    // Using OpenGL 3.3 Core Profile
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-
-    const int WIDTH = 800;
-    const int HEIGHT = 600;
-    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Breakout", nullptr, nullptr);
-    // Centering the window
-    const GLFWvidmode* vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-    glfwSetWindowPos(window, (vidMode->width - WIDTH) / 2, (vidMode->height - HEIGHT) / 2);
-
-    glfwMakeContextCurrent(window);
+    windowManager.startUp();
+    auto window = windowManager.createWindow(WIDTH, HEIGHT, "Breakout");
 
     glewExperimental = GL_TRUE;
     glewInit();
-
-    int width, height;
-    glfwGetFramebufferSize(window, &width, &height);
-    glViewport(0, 0, width, height);
 
     // Creating a triangle...
     GLfloat vertices[] = {
@@ -91,7 +72,7 @@ int main(int argc, char* argv[]) {
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
-    while(!glfwWindowShouldClose(window)) {
+    while(!window->isClosing()) {
         glfwPollEvents();
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.f);
@@ -103,7 +84,7 @@ int main(int argc, char* argv[]) {
         glDrawArrays(GL_TRIANGLES, 0, 3);
         glBindVertexArray(0);
 
-        glfwSwapBuffers(window);
+        window->swapBuffers();
     }
 
     // Clean up all the resources
@@ -111,8 +92,7 @@ int main(int argc, char* argv[]) {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
 
-    glfwDestroyWindow(window);
-    glfwTerminate();
+    windowManager.shutDown();
 
     return EXIT_SUCCESS;
 }
