@@ -1,5 +1,6 @@
 #pragma once
 
+#include <GL/glew.h>
 #include <string>
 
 class FileManager {
@@ -14,7 +15,12 @@ public:
     // Move assignment
     FileManager& operator =(FileManager&&) = delete;
 
-    std::string readAsText(const std::string& fileName) const;
+    std::string readAsText(const std::string& path) const;
+    unsigned char* readImage(const std::string& path,
+                             GLint width,
+                             GLint height,
+                             GLint components,
+                             bool flip = true) const;
 private:
     FileManager();
     ~FileManager();

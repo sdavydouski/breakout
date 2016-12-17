@@ -1,5 +1,7 @@
 #include "ShaderProgram.h"
 #include <GL/glew.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
 ShaderProgram::ShaderProgram(const Shader &vertexShader, const Shader &fragmentShader) {
@@ -29,6 +31,46 @@ void ShaderProgram::end() {
     glUseProgram(0);
 }
 
+void ShaderProgram::setUniform(const std::string& name, GLboolean value) {
+    glUniform1i(this->getUniformLocation(name), value);
+}
+
+void ShaderProgram::setUniform(const std::string& name, GLint value) {
+    glUniform1i(this->getUniformLocation(name), value);
+}
+
+void ShaderProgram::setUniform(const std::string& name, GLuint value) {
+    glUniform1i(this->getUniformLocation(name), value);
+}
+
+void ShaderProgram::setUniform(const std::string& name, GLfloat value) {
+    glUniform1f(this->getUniformLocation(name), value);
+}
+
+void ShaderProgram::setUniform(const std::string& name, glm::vec2 value) {
+    glUniform2f(this->getUniformLocation(name), value.x, value.y);
+}
+
+void ShaderProgram::setUniform(const std::string& name, glm::vec3 value) {
+    glUniform3f(this->getUniformLocation(name), value.x, value.y, value.z);
+}
+
+void ShaderProgram::setUniform(const std::string& name, glm::vec4 value) {
+    glUniform4f(this->getUniformLocation(name), value.x, value.y, value.z, value.w);
+}
+
+void ShaderProgram::setUniform(const std::string& name, glm::mat2 value) {
+    glUniformMatrix2fv(this->getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(value));
+}
+
+void ShaderProgram::setUniform(const std::string& name, glm::mat3 value) {
+    glUniformMatrix3fv(this->getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(value));
+}
+
+void ShaderProgram::setUniform(const std::string& name, glm::mat4 value) {
+    glUniformMatrix4fv(this->getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(value));
+}
+
 void ShaderProgram::checkLinkageStatus() {
     GLint success;
     glGetProgramiv(this->id, GL_LINK_STATUS, &success);
@@ -42,7 +84,7 @@ void ShaderProgram::checkLinkageStatus() {
     }
 }
 
-GLint ShaderProgram::getUniformLocation(const std::string &name) {
+GLint ShaderProgram::getUniformLocation(const std::string& name) {
     GLint location = glGetUniformLocation(this->id, name.c_str());
 
     if (location == -1) {

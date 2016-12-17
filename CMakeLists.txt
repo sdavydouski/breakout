@@ -5,7 +5,7 @@ find_package(OpenGL REQUIRED)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -static")
 
-set(SOURCES src/main.cpp src/WindowManager.cpp src/WindowManager.h src/Window.cpp src/Window.h src/Shader.cpp src/Shader.h src/ShaderType.h src/ShaderProgram.cpp src/ShaderProgram.h src/FileManager.cpp src/FileManager.h)
+set(SOURCES src/main.cpp src/WindowManager.cpp src/WindowManager.h src/Window.cpp src/Window.h src/Shader.cpp src/Shader.h src/ShaderType.h src/ShaderProgram.cpp src/ShaderProgram.h src/FileManager.cpp src/FileManager.h src/Texture.cpp src/Texture.h)
 
 # GLFW build configuration
 
@@ -23,6 +23,13 @@ add_subdirectory(externals/glew)
 include_directories(externals/glew/include)
 add_library(glew STATIC externals/glew/src/glew.c)
 add_definitions(-DGLEW_STATIC)
+
+# end
+# ------------------------
+# Header-only libraries
+
+include_directories(externals/glm)
+include_directories(externals/stb)
 
 # end
 
