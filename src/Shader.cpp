@@ -2,13 +2,15 @@
 #include "ShaderType.h"
 #include <GL/glew.h>
 #include <iostream>
+#include <string>
 
-Shader::Shader(ShaderType type, const GLchar *source) {
+Shader::Shader(ShaderType type, const std::string& source) {
     std::cout << "Shader constructor" << std::endl;
 
     this->id = glCreateShader(type);
 
-    glShaderSource(this->id, 1, &source, nullptr);
+    const GLchar* shaderSource = source.c_str();
+    glShaderSource(this->id, 1, &shaderSource, nullptr);
     glCompileShader(this->id);
 
     this->checkCompilationStatus();
