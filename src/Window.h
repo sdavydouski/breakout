@@ -19,7 +19,6 @@ private:
     GLFWwindow* window;
 
     Window(int width, int height, const std::string& title, bool isFullScreen, bool vsync);
-
     void destroy();
 
     friend class WindowManager;

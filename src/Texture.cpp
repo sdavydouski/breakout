@@ -24,7 +24,12 @@ Texture::Texture(GLuint width, GLuint height, unsigned char *image, GLuint forma
 }
 
 Texture::~Texture() {
+    // Empty destructor
     std::cout << "Texture destructor" << std::endl;
+}
+
+void Texture::destroy() {
+    std::cout << "Texture destroy()" << std::endl;
     glDeleteTextures(1, &this->id);
 }
 

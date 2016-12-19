@@ -7,7 +7,6 @@
 
 class ShaderProgram {
 public:
-    ShaderProgram(const Shader& vertexShader, const Shader& fragmentShader);
     ~ShaderProgram();
 
     void use();
@@ -26,6 +25,11 @@ public:
 private:
     GLuint id;
 
+    ShaderProgram(const Shader& vertexShader, const Shader& fragmentShader);
+    void destroy();
+
     void checkLinkageStatus();
     GLint getUniformLocation(const std::string& name);
+
+    friend class ResourceManager;
 };

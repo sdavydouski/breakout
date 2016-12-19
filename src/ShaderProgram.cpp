@@ -4,7 +4,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
-ShaderProgram::ShaderProgram(const Shader &vertexShader, const Shader &fragmentShader) {
+ShaderProgram::ShaderProgram(const Shader& vertexShader, const Shader& fragmentShader) {
     std::cout << "ShaderProgram constructor" << std::endl;
 
     this->id = glCreateProgram();
@@ -18,7 +18,12 @@ ShaderProgram::ShaderProgram(const Shader &vertexShader, const Shader &fragmentS
 }
 
 ShaderProgram::~ShaderProgram() {
+    // Empty destructor
     std::cout << "ShaderProgram destructor" << std::endl;
+}
+
+void ShaderProgram::destroy() {
+    std::cout << "ShaderProgram destroy()" << std::endl;
     this->end();
     glDeleteProgram(this->id);
 }

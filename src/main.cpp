@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include "WindowManager.h"
 #include "FileManager.h"
+#include "ResourceManager.h"
 #include "Window.h"
 #include "ShaderProgram.h"
 #include "Shader.h"
@@ -11,12 +12,15 @@
 
 WindowManager& windowManager = WindowManager::Instance();
 FileManager& fileManager = FileManager::Instance();
+ResourceManager& resourceManager = ResourceManager::Instance();
 
 const int WIDTH = 800;
 const int HEIGHT = 600;
 
 int main(int argc, char* argv[]) {
     windowManager.startUp();
+    resourceManager.startUp();
+
     auto window = windowManager.createWindow(WIDTH, HEIGHT, "Breakout");
 
     glewExperimental = GL_TRUE;
@@ -58,23 +62,26 @@ int main(int argc, char* argv[]) {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    ShaderProgram shader(
-        Shader(ShaderType::VERTEX, fileManager.readAsText("../resources/shaders/basic/shader.vert")),
-        Shader(ShaderType::FRAGMENT, fileManager.readAsText("../resources/shaders/basic/shader.frag"))
-    );
+    auto shader = resourceManager.createShader("basic",
+                                               Shader(ShaderType::VERTEX,
+                                                      fileManager.readAsText("../resources/shaders/basic/shader.vert")),
+                                               Shader(ShaderType::FRAGMENT,
+                                                      fileManager.readAsText("../resources/shaders/basic/shader.frag")));
 
     GLuint textureWidth = 512;
     GLuint textureHeight = 512;
-    Texture woodenContainer(textureWidth,
-                            textureHeight,
-                            fileManager.readImage("../resources/textures/wooden_container.jpg",
-                                                   textureWidth, textureHeight, 3),
-                            GL_RGB);
-    Texture awesomeFace(textureWidth,
-                        textureHeight,
-                        fileManager.readImage("../resources/textures/awesome_face.png",
-                                              textureWidth, textureHeight, 4),
-                        GL_RGBA);
+    auto woodenContainer = resourceManager.createTexture("woodenContainer",
+                                                         textureWidth,
+                                                         textureHeight,
+                                                         fileManager.readImage("../resources/textures/wooden_container.jpg",
+                                                                               textureWidth, textureHeight, 3),
+                                                         GL_RGB);
+    auto awesomeFace = resourceManager.createTexture("awesomeFace",
+                                                     textureWidth,
+                                                     textureHeight,
+                                                     fileManager.readImage("../resources/textures/awesome_face.png",
+                                                                           textureWidth, textureHeight, 4),
+                                                     GL_RGBA);
 
     while (!window->isClosing()) {
         glfwPollEvents();
@@ -82,12 +89,12 @@ int main(int argc, char* argv[]) {
         glClearColor(0.1f, 0.1f, 0.1f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        shader.use();
+        shader->use();
 
-        woodenContainer.bind(0);
-        shader.setUniform("texture1", 0);
-        awesomeFace.bind(1);
-        shader.setUniform("texture2", 1);
+        woodenContainer->bind(0);
+        shader->setUniform("texture1", 0);
+        awesomeFace->bind(1);
+        shader->setUniform("texture2", 1);
 
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -100,6 +107,7 @@ int main(int argc, char* argv[]) {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
 
+    resourceManager.shutDown();
     windowManager.shutDown();
 
     return EXIT_SUCCESS;

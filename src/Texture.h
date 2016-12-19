@@ -4,7 +4,6 @@
 
 class Texture {
 public:
-    Texture(GLuint width, GLuint height, unsigned char* image, GLuint format = GL_RGB);
     ~Texture();
     void bind();
     void bind(GLuint unit);
@@ -14,4 +13,9 @@ private:
     GLuint width;
     GLuint height;
     GLuint format;
+
+    Texture(GLuint width, GLuint height, unsigned char* image, GLuint format);
+    void destroy();
+
+    friend class ResourceManager;
 };
