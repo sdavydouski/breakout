@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include <iostream>
 #include <string>
+#include <vector>
 #include <stdexcept>
 
 Shader::Shader(ShaderType type, const std::string& path) {
@@ -11,7 +12,7 @@ Shader::Shader(ShaderType type, const std::string& path) {
 
     std::string source = FileManager::Instance().readAsText(path);
 
-    this->id = glCreateShader(type);
+    this->id = glCreateShader((GLenum) type);
 
     const GLchar* shaderSource = source.c_str();
     glShaderSource(this->id, 1, &shaderSource, nullptr);
@@ -37,10 +38,10 @@ void Shader::checkCompilationStatus() {
         GLint LOG_LENGTH;
         glGetShaderiv(this->id, GL_INFO_LOG_LENGTH, &LOG_LENGTH);
 
-        GLchar errorLog[LOG_LENGTH];
+        std::vector<GLchar> errorLog((GLuint) LOG_LENGTH);
 
-        glGetShaderInfoLog(this->id, LOG_LENGTH, nullptr, errorLog);
-        std::cerr << errorLog << std::endl;
+        glGetShaderInfoLog(this->id, LOG_LENGTH, nullptr, &errorLog[0]);
+        std::cerr << &errorLog[0] << std::endl;
         throw std::runtime_error("Shader compilation failed");
     }
 }

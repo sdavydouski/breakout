@@ -2,7 +2,7 @@
 
 #include <GL/glew.h>
 
-enum ShaderType {
+enum class ShaderType {
     VERTEX = GL_VERTEX_SHADER,
     FRAGMENT = GL_FRAGMENT_SHADER
 };
