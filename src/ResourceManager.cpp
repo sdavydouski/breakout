@@ -2,6 +2,7 @@
 #include "ShaderProgram.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "FileManager.h"
 #include <memory>
 #include <string>
 #include <iostream>
@@ -26,7 +27,7 @@ void ResourceManager::startUp() {
 }
 
 void ResourceManager::shutDown() {
-    for (const auto& shader : this->shaders) {
+    for (const auto& shader : this->shaderPrograms) {
         shader.second->destroy();
     }
     for (const auto& texture : this->textures) {
@@ -34,30 +35,33 @@ void ResourceManager::shutDown() {
     }
 }
 
-std::shared_ptr<ShaderProgram> ResourceManager::getShader(const std::string &name) {
-    return this->shaders[name];
+std::shared_ptr<ShaderProgram> ResourceManager::getShaderProgram(const std::string &name) {
+    return this->shaderPrograms[name];
 }
 
 std::shared_ptr<Texture> ResourceManager::getTexture(const std::string &name) {
     return this->textures[name];
 }
 
-std::shared_ptr<ShaderProgram> ResourceManager::createShader(const std::string& name,
-                                                             const Shader& vertexShader,
-                                                             const Shader& fragmentShader) {
+std::shared_ptr<ShaderProgram> ResourceManager::createShaderProgram(const std::string& name,
+                                                                    const Shader& vertexShader,
+                                                                    const Shader& fragmentShader) {
     std::shared_ptr<ShaderProgram> shader(new ShaderProgram(
             vertexShader, fragmentShader
     ));
-    this->shaders[name] = shader;
+    this->shaderPrograms[name] = shader;
 
     return shader;
 }
 
 std::shared_ptr<Texture> ResourceManager::createTexture(const std::string& name,
+                                                        const std::string& path,
                                                         GLuint width,
                                                         GLuint height,
-                                                        unsigned char* image,
+                                                        GLint channels,
                                                         GLuint format) {
+    unsigned char *image = FileManager::Instance().readImage(path, width, height, channels);
+
     std::shared_ptr<Texture> texture(new Texture(
             width, height, image, format
     ));

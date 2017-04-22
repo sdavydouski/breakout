@@ -2,7 +2,6 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "WindowManager.h"
-#include "FileManager.h"
 #include "ResourceManager.h"
 #include "Window.h"
 #include "ShaderProgram.h"
@@ -11,7 +10,6 @@
 #include "Texture.h"
 
 WindowManager& windowManager = WindowManager::Instance();
-FileManager& fileManager = FileManager::Instance();
 ResourceManager& resourceManager = ResourceManager::Instance();
 
 const int WIDTH = 800;
@@ -28,11 +26,11 @@ int main(int argc, char* argv[]) {
 
     // Rectangle
     GLfloat vertices[] = {
-            // Positions         // Texture coordinates
-            0.5f,  0.5f, 0.0f,   1.0f, 1.0f,   // Top right
-            0.5f, -0.5f, 0.0f,   1.0f, 0.0f,   // Bottom right
-            -0.5f, -0.5f, 0.0f,  0.0f, 0.0f,   // Bottom left
-            -0.5f,  0.5f, 0.0f,  0.0f, 1.0f    // Top left
+            // Positions   // Texture coordinates
+            0.5f,  0.5f,   1.0f, 1.0f,   // Top right
+            0.5f, -0.5f,   1.0f, 0.0f,   // Bottom right
+            -0.5f, -0.5f,  0.0f, 0.0f,   // Bottom left
+            -0.5f,  0.5f,  0.0f, 1.0f    // Top left
     };
     GLuint indices[] = {
             0, 1, 3, // First triangle
@@ -53,34 +51,32 @@ int main(int argc, char* argv[]) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*) 0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*) 0);
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*) (3 * sizeof(GLfloat)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*) (2 * sizeof(GLfloat)));
     glEnableVertexAttribArray(1);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    auto shader = resourceManager.createShader("basic",
-                                               Shader(ShaderType::VERTEX,
-                                                      fileManager.readAsText("../resources/shaders/basic/shader.vert")),
-                                               Shader(ShaderType::FRAGMENT,
-                                                      fileManager.readAsText("../resources/shaders/basic/shader.frag")));
+    auto shader = resourceManager.createShaderProgram("basic",
+                                                       Shader(ShaderType::VERTEX,
+                                                              "../resources/shaders/basic/shader.vert"),
+                                                       Shader(ShaderType::FRAGMENT,
+                                                              "../resources/shaders/basic/shader.frag"));
 
     GLuint textureWidth = 512;
     GLuint textureHeight = 512;
     auto woodenContainer = resourceManager.createTexture("woodenContainer",
+                                                         "../resources/textures/wooden_container.jpg",
                                                          textureWidth,
-                                                         textureHeight,
-                                                         fileManager.readImage("../resources/textures/wooden_container.jpg",
-                                                                               textureWidth, textureHeight, 3),
-                                                         GL_RGB);
+                                                         textureHeight);
     auto awesomeFace = resourceManager.createTexture("awesomeFace",
+                                                     "../resources/textures/awesome_face.png",
                                                      textureWidth,
                                                      textureHeight,
-                                                     fileManager.readImage("../resources/textures/awesome_face.png",
-                                                                           textureWidth, textureHeight, 4),
+                                                     4,
                                                      GL_RGBA);
 
     while (!window->isClosing()) {

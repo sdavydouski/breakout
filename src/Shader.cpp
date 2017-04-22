@@ -1,11 +1,15 @@
 #include "Shader.h"
 #include "ShaderType.h"
+#include "FileManager.h"
 #include <GL/glew.h>
 #include <iostream>
 #include <string>
+#include <stdexcept>
 
-Shader::Shader(ShaderType type, const std::string& source) {
+Shader::Shader(ShaderType type, const std::string& path) {
     std::cout << "Shader constructor" << std::endl;
+
+    std::string source = FileManager::Instance().readAsText(path);
 
     this->id = glCreateShader(type);
 
@@ -30,10 +34,13 @@ void Shader::checkCompilationStatus() {
     glGetShaderiv(this->id, GL_COMPILE_STATUS, &success);
 
     if (!success) {
-        const int MAX_BUFFER_SIZE = 256;
-        GLchar infoLog[MAX_BUFFER_SIZE];
+        GLint LOG_LENGTH;
+        glGetShaderiv(this->id, GL_INFO_LOG_LENGTH, &LOG_LENGTH);
 
-        glGetShaderInfoLog(this->id, MAX_BUFFER_SIZE, nullptr, infoLog);
-        std::cerr << infoLog << std::endl;
+        GLchar errorLog[LOG_LENGTH];
+
+        glGetShaderInfoLog(this->id, LOG_LENGTH, nullptr, errorLog);
+        std::cerr << errorLog << std::endl;
+        throw std::runtime_error("Shader compilation failed");
     }
 }

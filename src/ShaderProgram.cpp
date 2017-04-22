@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
+#include <stdexcept>
 
 ShaderProgram::ShaderProgram(const Shader& vertexShader, const Shader& fragmentShader) {
     std::cout << "ShaderProgram constructor" << std::endl;
@@ -81,11 +82,14 @@ void ShaderProgram::checkLinkageStatus() {
     glGetProgramiv(this->id, GL_LINK_STATUS, &success);
 
     if (!success) {
-        const int MAX_BUFFER_SIZE = 256;
-        GLchar infoLog[MAX_BUFFER_SIZE];
+        GLint LOG_LENGTH;
+        glGetProgramiv(this->id, GL_INFO_LOG_LENGTH, &LOG_LENGTH);
 
-        glGetProgramInfoLog(this->id, MAX_BUFFER_SIZE, nullptr, infoLog);
-        std::cerr << infoLog << std::endl;
+        GLchar errorLog[LOG_LENGTH];
+
+        glGetProgramInfoLog(this->id, LOG_LENGTH, nullptr, errorLog);
+        std::cerr << errorLog << std::endl;
+        throw std::runtime_error("Shader program linkage failed");
     }
 }
 
