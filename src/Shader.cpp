@@ -12,7 +12,7 @@ Shader::Shader(ShaderType type, const std::string& path) {
 
     std::string source = FileManager::Instance().readAsText(path);
 
-    this->id = glCreateShader((GLenum) type);
+    this->id = glCreateShader(type);
 
     const GLchar* shaderSource = source.c_str();
     glShaderSource(this->id, 1, &shaderSource, nullptr);

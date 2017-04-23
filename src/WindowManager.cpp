@@ -1,6 +1,7 @@
 #include "WindowManager.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <stdexcept>
 
 WindowManager::WindowManager() {
     // Empty constructor
@@ -20,7 +21,7 @@ WindowManager &WindowManager::Instance() {
 void WindowManager::startUp() {
     // Setup error handling
     glfwSetErrorCallback([](int errorCode, const char* description) -> void {
-        std::cerr << description << std::endl;
+        throw std::runtime_error(description);
     });
 
     std::cout << glfwGetVersionString() << std::endl;

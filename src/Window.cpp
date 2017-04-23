@@ -1,4 +1,5 @@
 #include "Window.h"
+#include "InputManager.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
 
@@ -36,6 +37,8 @@ Window::Window(int width, int height, const std::string& title, bool isFullScree
     int frameBufferWidth, frameBufferHeight;
     glfwGetFramebufferSize(this->window, &frameBufferWidth, &frameBufferHeight);
     glViewport(0, 0, frameBufferWidth, frameBufferHeight);
+
+    this->setupEventHandlers();
 }
 
 Window::~Window() {
@@ -61,4 +64,14 @@ void Window::makeContextCurrent() {
 
 void Window::swapBuffers() {
     glfwSwapBuffers(this->window);
+}
+
+void Window::setupEventHandlers() {
+    glfwSetKeyCallback(this->window, [](GLFWwindow* window,
+                                                    int key,
+                                                    int scancode,
+                                                    int action,
+                                                    int mods) {
+        InputManager::Instance().processKeyEvent(key, scancode, action, mods);
+    });
 }
