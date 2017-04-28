@@ -4,18 +4,11 @@
 #include <stdexcept>
 
 WindowManager::WindowManager() {
-    // Empty constructor
     std::cout << "WindowManager constructor" << std::endl;
 }
 
 WindowManager::~WindowManager() {
-    // Empty destructor
     std::cout << "WindowManager destructor" << std::endl;
-}
-
-WindowManager &WindowManager::Instance() {
-    static WindowManager instance;
-    return instance;
 }
 
 void WindowManager::startUp() {

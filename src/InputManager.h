@@ -1,21 +1,12 @@
 #pragma once
 
+#include "Singleton.h"
 #include "EventHandlers.h"
 #include <map>
 #include <string>
 
-class InputManager {
+class InputManager: public Singleton<InputManager> {
 public:
-    static InputManager& Instance();
-    // Copy constructor
-    InputManager(const InputManager&) = delete;
-    // Move constructor
-    InputManager(const InputManager&&) = delete;
-    // Copy assignment
-    InputManager& operator =(const InputManager&) = delete;
-    // Move assignment
-    InputManager& operator =(const InputManager&&) = delete;
-
     void startUp();
     void shutDown();
 
@@ -29,4 +20,6 @@ private:
 
     InputManager();
     ~InputManager();
+
+friend Singleton;
 };

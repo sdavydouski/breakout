@@ -1,21 +1,12 @@
 #pragma once
 
+#include "Singleton.h"
 #include "Window.h"
 #include <memory>
 #include <vector>
 
-class WindowManager {
+class WindowManager: public Singleton<WindowManager> {
 public:
-    static WindowManager& Instance();
-    // Copy constructor
-    WindowManager(const WindowManager&) = delete;
-    // Move constructor
-    WindowManager(WindowManager&&) = delete;
-    // Copy assignment
-    WindowManager& operator =(const WindowManager&) = delete;
-    // Move assignment
-    WindowManager& operator =(WindowManager&&) = delete;
-
     void startUp();
     void shutDown();
 
@@ -29,4 +20,6 @@ private:
 
     WindowManager();
     ~WindowManager();
+
+friend Singleton;
 };

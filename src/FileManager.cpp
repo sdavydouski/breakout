@@ -7,18 +7,11 @@
 #include <sstream>
 
 FileManager::FileManager() {
-    // Empty constructor
     std::cout << "FileManager constructor" << std::endl;
 }
 
 FileManager::~FileManager() {
-    // Empty destructor
     std::cout << "FileManager destructor" << std::endl;
-}
-
-FileManager &FileManager::Instance() {
-    static FileManager instance;
-    return instance;
 }
 
 std::string FileManager::readAsText(const std::string &path) const {

@@ -5,18 +5,11 @@
 #include <algorithm>
 
 InputManager::InputManager() {
-    // Empty constructor
     std::cout << "InputManager constructor" << std::endl;
 }
 
 InputManager::~InputManager() {
-    // Empty destructor
     std::cout << "InputManager destructor" << std::endl;
-}
-
-InputManager &InputManager::Instance() {
-    static InputManager instance;
-    return instance;
 }
 
 void InputManager::startUp() {

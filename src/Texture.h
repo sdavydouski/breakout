@@ -5,9 +5,9 @@
 class Texture {
 public:
     ~Texture();
-    void bind();
-    void bind(GLuint unit);
-    void unbind();
+    void bind() const;
+    void bind(GLuint unit) const;
+    void unbind() const;
 private:
     GLuint id;
     GLuint width;
@@ -17,5 +17,5 @@ private:
     Texture(GLuint width, GLuint height, unsigned char* image, GLuint format);
     void destroy();
 
-    friend class ResourceManager;
+friend class ResourceManager;
 };

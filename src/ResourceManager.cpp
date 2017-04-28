@@ -8,18 +8,11 @@
 #include <iostream>
 
 ResourceManager::ResourceManager() {
-    // Empty constructor
     std::cout << "ResourceManager constructor" << std::endl;
 }
 
 ResourceManager::~ResourceManager() {
-    // Empty destructor
     std::cout << "ResourceManager destructor" << std::endl;
-}
-
-ResourceManager &ResourceManager::Instance() {
-    static ResourceManager instance;
-    return instance;
 }
 
 void ResourceManager::startUp() {
@@ -35,11 +28,11 @@ void ResourceManager::shutDown() {
     }
 }
 
-std::shared_ptr<ShaderProgram> ResourceManager::getShaderProgram(const std::string &name) {
+std::shared_ptr<ShaderProgram> ResourceManager::getShaderProgram(const std::string& name) {
     return this->shaderPrograms[name];
 }
 
-std::shared_ptr<Texture> ResourceManager::getTexture(const std::string &name) {
+std::shared_ptr<Texture> ResourceManager::getTexture(const std::string& name) {
     return this->textures[name];
 }
 

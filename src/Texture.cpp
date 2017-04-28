@@ -33,15 +33,15 @@ void Texture::destroy() {
     glDeleteTextures(1, &this->id);
 }
 
-void Texture::bind() {
+void Texture::bind() const {
     glBindTexture(GL_TEXTURE_2D, this->id);
 }
 
-void Texture::bind(GLuint unit) {
+void Texture::bind(GLuint unit) const {
     glActiveTexture(GL_TEXTURE0 + unit);
     this->bind();
 }
 
-void Texture::unbind() {
+void Texture::unbind() const {
     glBindTexture(GL_TEXTURE_2D, 0);
 }

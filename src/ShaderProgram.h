@@ -31,5 +31,5 @@ private:
     void checkLinkageStatus();
     GLint getUniformLocation(const std::string& name);
 
-    friend class ResourceManager;
+friend class ResourceManager;
 };

@@ -1,14 +1,12 @@
 // glew header must be included before glfw header
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include "Singleton.h"
 #include "WindowManager.h"
 #include "InputManager.h"
 #include "ResourceManager.h"
 #include "Window.h"
-#include "ShaderProgram.h"
-#include "Shader.h"
-#include "ShaderType.h"
-#include "Texture.h"
+#include "Game.h"
 
 WindowManager& windowManager = WindowManager::Instance();
 InputManager& inputManager = InputManager::Instance();
@@ -30,87 +28,21 @@ int main(int argc, char* argv[]) {
         }
     });
 
-    glewExperimental = GL_TRUE;
-    glewInit();
+    Game breakout(window);
 
-    // Rectangle
-    GLfloat vertices[] = {
-            // Positions   // Texture coordinates
-            0.5f,  0.5f,   1.0f, 1.0f,   // Top right
-            0.5f, -0.5f,   1.0f, 0.0f,   // Bottom right
-            -0.5f, -0.5f,  0.0f, 0.0f,   // Bottom left
-            -0.5f,  0.5f,  0.0f, 1.0f    // Top left
-    };
-    GLuint indices[] = {
-            0, 1, 3, // First triangle
-            1, 2, 3  // Second triangle
-    };
-
-    // Setting up buffers
-    GLuint VAO, VBO, EBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*) 0);
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*) (2 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(1);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-    auto shader = resourceManager.createShaderProgram("basic",
-                                                       Shader(ShaderType::VERTEX,
-                                                              "../resources/shaders/basic/shader.vert"),
-                                                       Shader(ShaderType::FRAGMENT,
-                                                              "../resources/shaders/basic/shader.frag"));
-
-    GLuint textureWidth = 512;
-    GLuint textureHeight = 512;
-    auto woodenContainer = resourceManager.createTexture("woodenContainer",
-                                                         "../resources/textures/wooden_container.jpg",
-                                                         textureWidth,
-                                                         textureHeight);
-    auto awesomeFace = resourceManager.createTexture("awesomeFace",
-                                                     "../resources/textures/awesome_face.png",
-                                                     textureWidth,
-                                                     textureHeight,
-                                                     4,
-                                                     GL_RGBA);
+    GLfloat delta;
+    GLfloat lastFrame = (GLfloat) glfwGetTime();
 
     while (!window->isClosing()) {
-        inputManager.pollEvents();
+        // Calculate delta time
+        GLfloat currentFrame = (GLfloat) glfwGetTime();
+        delta = currentFrame - lastFrame;
+        lastFrame = currentFrame;
 
-        glClearColor(0.1f, 0.1f, 0.1f, 1.f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        shader->use();
-
-        woodenContainer->bind(0);
-        shader->setUniform("texture1", 0);
-        awesomeFace->bind(1);
-        shader->setUniform("texture2", 1);
-
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
-
-        window->swapBuffers();
+        breakout.input(delta);
+        breakout.update(delta);
+        breakout.render();
     }
-
-    // Clean up all the resources
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
 
     resourceManager.shutDown();
     inputManager.shutDown();

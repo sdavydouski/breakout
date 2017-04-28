@@ -10,6 +10,9 @@ public:
     void setIsShouldClose(bool isShouldClose);
     void makeContextCurrent();
     void swapBuffers();
+
+    int getWidth();
+    int getHeight();
 private:
     int width;
     int height;
@@ -22,5 +25,5 @@ private:
     void destroy();
     void setupEventHandlers();
 
-    friend class WindowManager;
+friend class WindowManager;
 };

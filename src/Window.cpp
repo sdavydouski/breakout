@@ -66,6 +66,14 @@ void Window::swapBuffers() {
     glfwSwapBuffers(this->window);
 }
 
+int Window::getWidth() {
+    return this->width;
+}
+
+int Window::getHeight() {
+    return this->height;
+}
+
 void Window::setupEventHandlers() {
     glfwSetKeyCallback(this->window, [](GLFWwindow* window,
                                                     int key,
