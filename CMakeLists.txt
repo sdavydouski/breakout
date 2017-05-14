@@ -3,7 +3,7 @@ project(breakout)
 
 find_package(OpenGL REQUIRED)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -static")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 set(SOURCES src/main.cpp src/WindowManager.cpp src/WindowManager.h src/Window.cpp src/Window.h src/Shader.cpp src/Shader.h src/ShaderType.h src/ShaderProgram.cpp src/ShaderProgram.h src/FileManager.cpp src/FileManager.h src/Texture.cpp src/Texture.h src/ResourceManager.cpp src/ResourceManager.h src/InputManager.cpp src/InputManager.h src/EventHandlers.h src/Game.cpp src/Game.h src/GameState.h src/SpriteRenderer.cpp src/SpriteRenderer.h src/Singleton.h)
 

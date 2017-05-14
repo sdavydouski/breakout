@@ -53,7 +53,7 @@ void SpriteRenderer::renderSprite(const std::shared_ptr<Texture> texture,
                                   const glm::vec2& position,
                                   const glm::vec2& size,
                                   const glm::vec3& color,
-                                  GLfloat rotate) {
+                                  GLfloat rotate) const {
     this->shaderProgram->use();
 
     glm::mat4 model;
