@@ -7,11 +7,13 @@
 #include "InputManager.h"
 #include "WindowManager.h"
 #include "Window.h"
+#include "GameLevel.h"
 #include <memory>
+#include <vector>
 
 class Game {
 public:
-    Game(int width, int height);
+    Game(int width, int height, bool isFullScreen);
     ~Game();
 
     void input(GLfloat delta);
@@ -22,6 +24,8 @@ public:
 private:
     GameState gameState;
     std::shared_ptr<Window> window;
+    std::vector<std::shared_ptr<GameLevel>> levels;
+    int currentLevel;
 
     WindowManager& windowManager = WindowManager::Instance();
     InputManager& inputManager = InputManager::Instance();
@@ -29,7 +33,7 @@ private:
 
     SpriteRenderer& spriteRenderer = SpriteRenderer::Instance();
 
-    void initWindow(int width, int height);
+    void initWindow(int width, int height, bool isFullScreen);
     void initGL();
     void initResources();
 };

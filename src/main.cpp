@@ -3,11 +3,12 @@
 #include <GLFW/glfw3.h>
 #include "Game.h"
 
-const int WIDTH = 800;
-const int HEIGHT = 600;
+const int width = 800;
+const int height = 600;
+bool isFullScreen = false;
 
 int main(int argc, char* argv[]) {
-    Game breakout(WIDTH, HEIGHT);
+    Game breakout(width, height, isFullScreen);
 
     GLfloat delta;
     GLfloat lastFrame = (GLfloat) glfwGetTime();

@@ -6,11 +6,11 @@ GameObject::GameObject(const glm::vec2& position,
                        const glm::vec3& color,
                        std::shared_ptr<Texture> sprite)
     : position(position), size(size), color(color), sprite(sprite) {
-    std::cout << "GameObject constructor" << std::endl;
+    //std::cout << "GameObject constructor" << std::endl;
 }
 
 GameObject::~GameObject() {
-    std::cout << "GameObject destructor" << std::endl;
+    //std::cout << "GameObject destructor" << std::endl;
 }
 
 void GameObject::render(const SpriteRenderer& renderer) {

@@ -10,15 +10,15 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 
-Game::Game(int width, int height)
-    : window(window), gameState(GameState::GAME_ACTIVE) {
+Game::Game(int width, int height, bool isFullScreen)
+    : gameState(GameState::GAME_ACTIVE) {
     std::cout << "Game constructor" << std::endl;
 
     this->windowManager.startUp();
     this->inputManager.startUp();
     this->resourceManager.startUp();
 
-    this->initWindow(width, height);
+    this->initWindow(width, height, isFullScreen);
     this->initGL();
     this->initResources();
 }
@@ -40,14 +40,13 @@ void Game::update(GLfloat delta) {
 }
 
 void Game::render() {
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    if (this->gameState == GameState::GAME_ACTIVE) {
+        this->spriteRenderer.renderSprite(this->resourceManager.getTexture("background"),
+                                          glm::vec2(0.0f, 0.0f),
+                                          glm::vec2(this->window->getWidth(), this->window->getHeight()));
 
-    this->spriteRenderer.renderSprite(this->resourceManager.getTexture("awesomeFace"),
-                                      glm::vec2(200, 200),
-                                      glm::vec2(300, 400),
-                                      glm::vec3(0.0f, 1.0f, 0.0f),
-                                      glm::radians(45.0f));
+        this->levels[this->currentLevel]->render(this->spriteRenderer);
+    }
 
     this->window->swapBuffers();
 }
@@ -56,8 +55,8 @@ bool Game::isExiting() {
     return this->window->isClosing();
 }
 
-void Game::initWindow(int width, int height) {
-    this->window = this->windowManager.createWindow(width, height, "Breakout");
+void Game::initWindow(int width, int height, bool isFullScreen) {
+    this->window = this->windowManager.createWindow(width, height, "Breakout", isFullScreen);
 
     this->inputManager.addKeyHandler("exit", [this](int key, int scancode, int action, int mods) {
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
@@ -89,7 +88,27 @@ void Game::initResources() {
     shader->setUniform("image", 0);
 
     this->spriteRenderer.init(shader);
+
+    this->resourceManager.createTexture("background",
+                                        "../resources/textures/background.jpg",
+                                        1600, 900);
     this->resourceManager.createTexture("awesomeFace",
                                         "../resources/textures/awesome_face.png",
                                         512, 512, 4, GL_RGBA);
+    this->resourceManager.createTexture("block",
+                                        "../resources/textures/block.png",
+                                        128, 128);
+    this->resourceManager.createTexture("block_solid",
+                                        "../resources/textures/block_solid.png",
+                                        128, 128);
+
+    this->levels.push_back(std::shared_ptr<GameLevel>(new GameLevel(
+            "../resources/levels/1.txt", this->window->getWidth(), this->window->getHeight() / 2)));
+    this->levels.push_back(std::shared_ptr<GameLevel>(new GameLevel(
+            "../resources/levels/2.txt", this->window->getWidth(), this->window->getHeight() / 2)));
+    this->levels.push_back(std::shared_ptr<GameLevel>(new GameLevel(
+            "../resources/levels/3.txt", this->window->getWidth(), this->window->getHeight() / 2)));
+    this->levels.push_back(std::shared_ptr<GameLevel>(new GameLevel(
+            "../resources/levels/4.txt", this->window->getWidth(), this->window->getHeight() / 2)));
+    this->currentLevel = 0;
 }
