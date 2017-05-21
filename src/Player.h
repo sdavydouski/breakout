@@ -14,7 +14,7 @@ public:
            float velocity,
            const glm::vec2& boundaries);
     ~Player();
-private:
+//private:
     float velocity;
     glm::vec2 boundaries;
 

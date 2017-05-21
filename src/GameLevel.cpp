@@ -50,8 +50,8 @@ void GameLevel::initLevel(std::vector<std::vector<int>> tiles, int levelWidth, i
     float tileWidth = (float) levelWidth / (float) tiles[0].size();
     float tileHeight = (float) levelHeight / (float) tiles.size();
 
-    for (int i = 0; i < tiles.size(); ++i) {
-        for (int j = 0; j < tiles[0].size(); ++j) {
+    for (unsigned int i = 0; i < tiles.size(); ++i) {
+        for (unsigned int j = 0; j < tiles[0].size(); ++j) {
             glm::vec2 position(tileWidth * j, tileHeight * i);
             glm::vec2 size(tileWidth, tileHeight);
 

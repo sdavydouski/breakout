@@ -16,7 +16,7 @@ public:
 
     virtual void render(const SpriteRenderer& renderer);
 
-protected:
+//protected:
     glm::vec2 position;
     glm::vec2 size;
     glm::vec3 color;

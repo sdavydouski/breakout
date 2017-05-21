@@ -33,10 +33,31 @@ Game::~Game() {
 
 void Game::input(GLfloat delta) {
     this->inputManager.pollEvents(delta);
+
+    if (this->inputManager.isKeyPressed(GLFW_KEY_A) || this->inputManager.isKeyPressed(GLFW_KEY_LEFT)) {
+        if (this->player->position.x >= this->player->boundaries.x) {
+            this->player->position.x -= this->player->velocity * delta;
+            if (this->ball->isStuck) {
+                this->ball->position.x -= this->player->velocity * delta;
+            }
+        }
+    }
+    if (this->inputManager.isKeyPressed(GLFW_KEY_D) || this->inputManager.isKeyPressed(GLFW_KEY_RIGHT)) {
+        if (this->player->position.x <= this->player->boundaries.y) {
+            this->player->position.x += this->player->velocity * delta;
+            if (this->ball->isStuck) {
+                this->ball->position.x += this->player->velocity * delta;
+            }
+        }
+    }
+
+    if (this->inputManager.isKeyPressed(GLFW_KEY_SPACE)) {
+        this->ball->isStuck = false;
+    }
 }
 
 void Game::update(GLfloat delta) {
-
+    this->ball->move(glm::vec4(0.0f, this->window->getWidth(), 0.0f, this->window->getHeight()), delta);
 }
 
 void Game::render() {
@@ -47,6 +68,7 @@ void Game::render() {
 
         this->levels[this->currentLevel]->render(this->spriteRenderer);
         this->player->render(this->spriteRenderer);
+        this->ball->render(this->spriteRenderer);
     }
 
     this->window->swapBuffers();
@@ -93,7 +115,7 @@ void Game::initResources() {
     this->resourceManager.createTexture("background",
                                         "../resources/textures/background.jpg",
                                         1600, 900);
-    this->resourceManager.createTexture("awesomeFace",
+    this->resourceManager.createTexture("face",
                                         "../resources/textures/awesome_face.png",
                                         512, 512, 4, GL_RGBA);
     this->resourceManager.createTexture("block",
@@ -117,11 +139,29 @@ void Game::initResources() {
     this->currentLevel = 0;
 
     glm::vec2 playerSize = glm::vec2(120, 20);
-
-    this->player = std::shared_ptr<Player>(new Player(glm::vec2(
+    glm::vec2 playerPosition = glm::vec2(
             this->window->getWidth() / 2 - playerSize.x / 2,
             this->window->getHeight() - playerSize.y
-        ), playerSize, glm::vec3(1.0f), this->resourceManager.getTexture("paddle"),
-           500.0f, glm::vec2(0, this->window->getWidth() - playerSize.x))
+    );
+
+    this->player = std::shared_ptr<Player>(new Player(playerPosition,
+                                                      playerSize,
+                                                      glm::vec3(1.0f),
+                                                      this->resourceManager.getTexture("paddle"),
+                                                      500.0f,
+                                                      glm::vec2(0, this->window->getWidth() - playerSize.x)
+                                           )
+    );
+
+    float ballRadius = 15.0f;
+    glm::vec2 ballVelocity = glm::vec2(200.0f, -500.0f);
+
+    this->ball = std::shared_ptr<Ball>(new Ball(playerPosition + glm::vec2(playerSize.x / 2 - ballRadius,
+                                                                           -2 * ballRadius),
+                                                ballRadius,
+                                                glm::vec3(1.0f),
+                                                this->resourceManager.getTexture("face"),
+                                                ballVelocity
+                                       )
     );
 }
