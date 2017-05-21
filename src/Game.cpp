@@ -32,7 +32,7 @@ Game::~Game() {
 }
 
 void Game::input(GLfloat delta) {
-    this->inputManager.pollEvents();
+    this->inputManager.pollEvents(delta);
 }
 
 void Game::update(GLfloat delta) {
@@ -46,6 +46,7 @@ void Game::render() {
                                           glm::vec2(this->window->getWidth(), this->window->getHeight()));
 
         this->levels[this->currentLevel]->render(this->spriteRenderer);
+        this->player->render(this->spriteRenderer);
     }
 
     this->window->swapBuffers();
@@ -58,8 +59,8 @@ bool Game::isExiting() {
 void Game::initWindow(int width, int height, bool isFullScreen) {
     this->window = this->windowManager.createWindow(width, height, "Breakout", isFullScreen);
 
-    this->inputManager.addKeyHandler("exit", [this](int key, int scancode, int action, int mods) {
-        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+    this->inputManager.addKeyHandler("exit", [this](float delta) {
+        if (this->inputManager.isKeyPressed(GLFW_KEY_ESCAPE)) {
             this->window->setIsShouldClose(true);
         }
     });
@@ -101,6 +102,9 @@ void Game::initResources() {
     this->resourceManager.createTexture("block_solid",
                                         "../resources/textures/block_solid.png",
                                         128, 128);
+    this->resourceManager.createTexture("paddle",
+                                        "../resources/textures/paddle.png",
+                                        512, 128, 4, GL_RGBA);
 
     this->levels.push_back(std::shared_ptr<GameLevel>(new GameLevel(
             "../resources/levels/1.txt", this->window->getWidth(), this->window->getHeight() / 2)));
@@ -111,4 +115,13 @@ void Game::initResources() {
     this->levels.push_back(std::shared_ptr<GameLevel>(new GameLevel(
             "../resources/levels/4.txt", this->window->getWidth(), this->window->getHeight() / 2)));
     this->currentLevel = 0;
+
+    glm::vec2 playerSize = glm::vec2(120, 20);
+
+    this->player = std::shared_ptr<Player>(new Player(glm::vec2(
+            this->window->getWidth() / 2 - playerSize.x / 2,
+            this->window->getHeight() - playerSize.y
+        ), playerSize, glm::vec3(1.0f), this->resourceManager.getTexture("paddle"),
+           500.0f, glm::vec2(0, this->window->getWidth() - playerSize.x))
+    );
 }

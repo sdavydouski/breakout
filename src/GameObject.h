@@ -15,7 +15,8 @@ public:
     virtual ~GameObject();
 
     virtual void render(const SpriteRenderer& renderer);
-private:
+
+protected:
     glm::vec2 position;
     glm::vec2 size;
     glm::vec3 color;

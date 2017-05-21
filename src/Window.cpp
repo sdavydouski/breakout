@@ -1,6 +1,5 @@
 #include "Window.h"
 #include "InputManager.h"
-#include <GLFW/glfw3.h>
 #include <iostream>
 
 Window::Window(int width, int height, const std::string& title, bool isFullScreen, bool vsync)

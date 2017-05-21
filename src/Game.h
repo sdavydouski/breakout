@@ -8,6 +8,7 @@
 #include "WindowManager.h"
 #include "Window.h"
 #include "GameLevel.h"
+#include "Player.h"
 #include <memory>
 #include <vector>
 
@@ -26,6 +27,8 @@ private:
     std::shared_ptr<Window> window;
     std::vector<std::shared_ptr<GameLevel>> levels;
     int currentLevel;
+
+    std::shared_ptr<Player> player;
 
     WindowManager& windowManager = WindowManager::Instance();
     InputManager& inputManager = InputManager::Instance();
