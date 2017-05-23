@@ -41,4 +41,7 @@ private:
     void initWindow(int width, int height, bool isFullScreen);
     void initGL();
     void initResources();
+
+    bool checkCollision(const Ball& ball, const Brick& brick);
+    void checkCollisions();
 };

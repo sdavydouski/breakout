@@ -16,3 +16,7 @@ GameObject::~GameObject() {
 void GameObject::render(const SpriteRenderer& renderer) {
     renderer.renderSprite(this->sprite, this->position, this->size, this->color);
 }
+
+const glm::vec2& GameObject::getSize() const {
+    return this->size;
+}

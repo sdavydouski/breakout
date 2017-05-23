@@ -16,8 +16,11 @@ public:
 
     virtual void render(const SpriteRenderer& renderer);
 
-//protected:
+    const glm::vec2& getSize() const;
+
+    // top-left position
     glm::vec2 position;
+protected:
     glm::vec2 size;
     glm::vec3 color;
     std::shared_ptr<Texture> sprite;

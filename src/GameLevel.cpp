@@ -20,7 +20,9 @@ GameLevel::~GameLevel() {
 
 void GameLevel::render(SpriteRenderer& renderer) {
     for (Brick& brick : this->bricks) {
-        brick.render(renderer);
+        if (!brick.getIsDestroyed()) {
+            brick.render(renderer);
+        }
     }
 }
 
@@ -86,4 +88,8 @@ void GameLevel::initLevel(std::vector<std::vector<int>> tiles, int levelWidth, i
             }
         }
     }
+}
+
+std::vector<Brick>& GameLevel::getBricks() {
+    return this->bricks;
 }

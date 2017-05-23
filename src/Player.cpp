@@ -16,3 +16,11 @@ Player::Player(const glm::vec2 &position,
 Player::~Player() {
     std::cout << "Player destructor" << std::endl;
 }
+
+float Player::getVelocity() const {
+    return this->velocity;
+}
+
+const glm::vec2& Player::getBoundaries() const {
+    return this->boundaries;
+}

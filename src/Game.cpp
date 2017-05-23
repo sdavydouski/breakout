@@ -33,31 +33,33 @@ Game::~Game() {
 
 void Game::input(GLfloat delta) {
     this->inputManager.pollEvents(delta);
+    float velocity = this->player->getVelocity() * delta;
 
     if (this->inputManager.isKeyPressed(GLFW_KEY_A) || this->inputManager.isKeyPressed(GLFW_KEY_LEFT)) {
-        if (this->player->position.x >= this->player->boundaries.x) {
-            this->player->position.x -= this->player->velocity * delta;
-            if (this->ball->isStuck) {
-                this->ball->position.x -= this->player->velocity * delta;
+        if (this->player->position.x >= this->player->getBoundaries().x) {
+            this->player->position.x -= velocity;
+            if (this->ball->getIsStuck()) {
+                this->ball->position.x -= velocity;
             }
         }
     }
     if (this->inputManager.isKeyPressed(GLFW_KEY_D) || this->inputManager.isKeyPressed(GLFW_KEY_RIGHT)) {
-        if (this->player->position.x <= this->player->boundaries.y) {
-            this->player->position.x += this->player->velocity * delta;
-            if (this->ball->isStuck) {
-                this->ball->position.x += this->player->velocity * delta;
+        if (this->player->position.x <= this->player->getBoundaries().y) {
+            this->player->position.x += velocity;
+            if (this->ball->getIsStuck()) {
+                this->ball->position.x += velocity;
             }
         }
     }
 
     if (this->inputManager.isKeyPressed(GLFW_KEY_SPACE)) {
-        this->ball->isStuck = false;
+        this->ball->setIsStuck(false);
     }
 }
 
 void Game::update(GLfloat delta) {
-    this->ball->move(glm::vec4(0.0f, this->window->getWidth(), 0.0f, this->window->getHeight()), delta);
+    this->ball->update(delta);
+    this->checkCollisions();
 }
 
 void Game::render() {
@@ -154,14 +156,48 @@ void Game::initResources() {
     );
 
     float ballRadius = 15.0f;
-    glm::vec2 ballVelocity = glm::vec2(200.0f, -500.0f);
+    glm::vec2 ballVelocity = glm::vec2(250.0f, -500.0f);
 
     this->ball = std::shared_ptr<Ball>(new Ball(playerPosition + glm::vec2(playerSize.x / 2 - ballRadius,
                                                                            -2 * ballRadius),
                                                 ballRadius,
                                                 glm::vec3(1.0f),
                                                 this->resourceManager.getTexture("face"),
-                                                ballVelocity
+                                                ballVelocity,
+                                                glm::vec4(0.0f, this->window->getWidth(), 0.0f, this->window->getHeight())
                                        )
     );
+}
+
+// AABB - Circle collision
+bool Game::checkCollision(const Ball& ball, const Brick& brick) {
+    // Get center point circle first
+    glm::vec2 center = ball.position + ball.getRadius();
+    // Calculate AABB info (center, half-extents)
+    glm::vec2 aabbHalfExtents(brick.getSize().x / 2, brick.getSize().y / 2);
+    glm::vec2 aabbCenter(
+        brick.position.x + aabbHalfExtents.x,
+        brick.position.y + aabbHalfExtents.y
+    );
+    // Get difference vector between both centers
+    glm::vec2 difference = center - aabbCenter;
+    glm::vec2 clamped = glm::clamp(difference, -aabbHalfExtents, aabbHalfExtents);
+    // Add clamped value to AABB_center and we get the value of box closest to circle
+    glm::vec2 closest = aabbCenter + clamped;
+    // Retrieve vector between center circle and closest point AABB and check if length <= radius
+    difference = closest - center;
+
+    return glm::length(difference) < ball.getRadius();
+}
+
+void Game::checkCollisions() {
+    for (Brick& brick : this->levels[this->currentLevel]->getBricks()) {
+        if (!brick.getIsDestroyed()) {
+            if (this->checkCollision(*this->ball.get(), brick)) {
+                if (!brick.getIsSolid()) {
+                    brick.setIsDestroyed(true);
+                }
+            }
+        }
+    }
 }

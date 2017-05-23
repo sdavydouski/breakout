@@ -9,6 +9,10 @@ public:
           const glm::vec3& color,
           std::shared_ptr<Texture> sprite,
           bool isSolid = false);
+
+    bool getIsSolid() const;
+    bool getIsDestroyed() const;
+    void setIsDestroyed(bool isDestroyed);
 private:
     bool isSolid;
     bool isDestroyed;

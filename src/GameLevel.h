@@ -12,6 +12,8 @@ public:
 
     void render(SpriteRenderer& renderer);
     bool isCompleted();
+
+    std::vector<Brick>& getBricks();
 private:
     std::vector<Brick> bricks;
 
