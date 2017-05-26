@@ -23,7 +23,7 @@ public:
     void setUniform(const std::string& name, glm::mat3 value);
     void setUniform(const std::string& name, glm::mat4 value);
 private:
-    GLuint id;
+    GLuint id_;
 
     ShaderProgram(const Shader& vertexShader, const Shader& fragmentShader);
     void destroy();

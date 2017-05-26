@@ -4,14 +4,14 @@
 #include <iostream>
 
 Texture::Texture(GLuint width, GLuint height, unsigned char *image, GLuint format)
-    : width(width), height(height), format(format) {
+    : width_(width), height_(height), format_(format) {
     std::cout << "Texture constructor" << std::endl;
 
-    glGenTextures(1, &this->id);
+    glGenTextures(1, &id_);
 
     this->bind();
 
-    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, image);
+    glTexImage2D(GL_TEXTURE_2D, 0, format_, width_, height_, 0, format_, GL_UNSIGNED_BYTE, image);
 
     stbi_image_free(image);
 
@@ -30,11 +30,11 @@ Texture::~Texture() {
 
 void Texture::destroy() {
     std::cout << "Texture destroy()" << std::endl;
-    glDeleteTextures(1, &this->id);
+    glDeleteTextures(1, &id_);
 }
 
 void Texture::bind() const {
-    glBindTexture(GL_TEXTURE_2D, this->id);
+    glBindTexture(GL_TEXTURE_2D, id_);
 }
 
 void Texture::bind(GLuint unit) const {

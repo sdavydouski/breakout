@@ -18,9 +18,9 @@ public:
 
     bool isKeyPressed(int key);
 private:
-    std::map<std::string, KeyHandler> keyHandlers;
-    float delta;
-    bool keys[348];             // GLFW3 defines 348 different key codes
+    std::map<std::string, KeyHandler> keyHandlers_;
+    float delta_;
+    bool keys_[348];             // GLFW3 defines 348 different key codes
 
     InputManager();
     ~InputManager();

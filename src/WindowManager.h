@@ -16,7 +16,7 @@ public:
                                          bool isFullScreen = false,
                                          bool vsync = true);
 private:
-    std::vector<std::shared_ptr<Window>> windows;
+    std::vector<std::shared_ptr<Window>> windows_;
 
     WindowManager();
     ~WindowManager();

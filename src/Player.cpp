@@ -1,6 +1,4 @@
 #include "Player.h"
-#include "InputManager.h"
-#include <GLFW/glfw3.h>
 #include <iostream>
 
 Player::Player(const glm::vec2 &position,
@@ -9,18 +7,10 @@ Player::Player(const glm::vec2 &position,
                std::shared_ptr<Texture> sprite,
                float velocity,
                const glm::vec2& boundaries)
-    : GameObject(position, size, color, sprite), velocity(velocity), boundaries(boundaries) {
+    : GameObject(position, size, color, sprite), velocity_(velocity), boundaries_(boundaries) {
     std::cout << "Player constructor" << std::endl;
 }
 
 Player::~Player() {
     std::cout << "Player destructor" << std::endl;
-}
-
-float Player::getVelocity() const {
-    return this->velocity;
-}
-
-const glm::vec2& Player::getBoundaries() const {
-    return this->boundaries;
 }

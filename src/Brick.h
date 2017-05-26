@@ -10,10 +10,14 @@ public:
           std::shared_ptr<Texture> sprite,
           bool isSolid = false);
 
-    bool getIsSolid() const;
-    bool getIsDestroyed() const;
-    void setIsDestroyed(bool isDestroyed);
+    // getters
+    bool isSolid() const { return isSolid_; }
+    bool isDestroyed() const { return isDestroyed_; }
+
+    // setters
+    void isDestroyed(bool isDestroyed) { isDestroyed_ = isDestroyed; }
+
 private:
-    bool isSolid;
-    bool isDestroyed;
+    bool isSolid_;
+    bool isDestroyed_;
 };

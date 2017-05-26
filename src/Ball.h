@@ -16,14 +16,21 @@ public:
 
     void update(float delta);
 
-    const glm::vec2& getVelocity() const;
-    float getRadius() const;
-    bool getIsStuck() const;
-    void setIsStuck(bool isStuck);
-private:
-    glm::vec2 velocity;
-    float radius;
-    bool isStuck;
+    // getters
+    float radius() const { return radius_; }
+    const glm::vec2& velocity() const { return velocity_; }
+    bool isStuck() const { return isStuck_; }
+    const glm::vec4& boundaries() const { return boundaries_; }
 
-    glm::vec4 boundaries;
+    // setters
+    void velocity(const glm::vec2 velocity) { velocity_ = velocity; }
+    void velocityX(float x) { velocity_.x = x; }
+    void velocityY(float y) { velocity_.y = y; }
+    void isStuck(bool isStuck) { isStuck_ = isStuck; }
+
+private:
+    float radius_;
+    glm::vec2 velocity_;
+    bool isStuck_;
+    glm::vec4 boundaries_;
 };

@@ -9,10 +9,10 @@ public:
     void bind(GLuint unit) const;
     void unbind() const;
 private:
-    GLuint id;
-    GLuint width;
-    GLuint height;
-    GLuint format;
+    GLuint id_;
+    GLuint width_;
+    GLuint height_;
+    GLuint format_;
 
     Texture(GLuint width, GLuint height, unsigned char* image, GLuint format);
     void destroy();

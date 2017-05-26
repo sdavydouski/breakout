@@ -13,9 +13,10 @@ public:
     void render(SpriteRenderer& renderer);
     bool isCompleted();
 
-    std::vector<Brick>& getBricks();
+    // getters
+    std::vector<Brick>& bricks() { return bricks_; }
 private:
-    std::vector<Brick> bricks;
+    std::vector<Brick> bricks_;
 
     std::vector<std::vector<int>> loadTiles(const std::string& path);
     void initLevel(std::vector<std::vector<int>> tiles, int levelWidth, int levelHeight);

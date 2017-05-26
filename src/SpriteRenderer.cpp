@@ -13,12 +13,12 @@ SpriteRenderer::SpriteRenderer() {
 SpriteRenderer::~SpriteRenderer() {
     std::cout << "SpriteRenderer destructor" << std::endl;
 
-    glDeleteVertexArrays(1, &this->VAO);
-    glDeleteBuffers(1, &this->VBO);
+    glDeleteVertexArrays(1, &VAO_);
+    glDeleteBuffers(1, &VBO_);
 }
 
 void SpriteRenderer::init(const std::shared_ptr<ShaderProgram> shaderProgram) {
-    this->setShaderProgram(shaderProgram);
+    this->shaderProgram(shaderProgram);
 
     GLfloat vertices[] = {
         // Pos      // Tex
@@ -31,11 +31,11 @@ void SpriteRenderer::init(const std::shared_ptr<ShaderProgram> shaderProgram) {
         1.0f, 0.0f, 1.0f, 0.0f
     };
 
-    glGenVertexArrays(1, &this->VAO);
-    glGenBuffers(1, &this->VBO);
+    glGenVertexArrays(1, &VAO_);
+    glGenBuffers(1, &VBO_);
 
-    glBindVertexArray(this->VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
+    glBindVertexArray(VAO_);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*) 0);
@@ -45,16 +45,12 @@ void SpriteRenderer::init(const std::shared_ptr<ShaderProgram> shaderProgram) {
     glBindVertexArray(0);
 }
 
-void SpriteRenderer::setShaderProgram(const std::shared_ptr<ShaderProgram> shaderProgram) {
-    this->shaderProgram = shaderProgram;
-}
-
 void SpriteRenderer::renderSprite(const std::shared_ptr<Texture> texture,
                                   const glm::vec2& position,
                                   const glm::vec2& size,
                                   const glm::vec3& color,
                                   GLfloat rotate) const {
-    this->shaderProgram->use();
+    shaderProgram_->use();
 
     glm::mat4 model;
     model = glm::translate(model, glm::vec3(position, 0.0f));
@@ -63,12 +59,12 @@ void SpriteRenderer::renderSprite(const std::shared_ptr<Texture> texture,
     model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f));
     model = glm::scale(model, glm::vec3(size, 1.0f));
 
-    this->shaderProgram->setUniform("model", model);
-    this->shaderProgram->setUniform("color", color);
+    shaderProgram_->setUniform("model", model);
+    shaderProgram_->setUniform("color", color);
 
     texture->bind();
 
-    glBindVertexArray(this->VAO);
+    glBindVertexArray(VAO_);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
 }

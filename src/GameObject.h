@@ -16,12 +16,21 @@ public:
 
     virtual void render(const SpriteRenderer& renderer);
 
-    const glm::vec2& getSize() const;
+    // getters
+    const glm::vec2& position() const { return position_; };
+    const glm::vec2& size() const { return size_; };
+    const glm::vec2& color() const { return color_; };
 
-    // top-left position
-    glm::vec2 position;
+    // setters
+    void position(const glm::vec2& position) { position_ = position; }
+    void positionX(float x) { position_.x = x; }
+    void positionY(float y) { position_.y = y; }
+    void updatePositionX(float delta) { position_.x += delta; }
+    void updatePositionY(float delta) { position_.y += delta; }
+
 protected:
-    glm::vec2 size;
-    glm::vec3 color;
-    std::shared_ptr<Texture> sprite;
+    glm::vec2 position_;        // top-left position
+    glm::vec2 size_;
+    glm::vec3 color_;
+    std::shared_ptr<Texture> sprite_;
 };

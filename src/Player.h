@@ -1,7 +1,6 @@
 #pragma once
 
 #include "GameObject.h"
-#include "InputManager.h"
 #include <glm/vec2.hpp>
 #include <memory>
 
@@ -15,11 +14,10 @@ public:
            const glm::vec2& boundaries);
     ~Player();
 
-    float getVelocity() const;
-    const glm::vec2& getBoundaries() const;
+    // getters
+    float velocity() const { return velocity_; };
+    const glm::vec2& boundaries() const { return boundaries_; };
 private:
-    float velocity;
-    glm::vec2 boundaries;
-
-    InputManager& inputManager = InputManager::Instance();
+    float velocity_;
+    glm::vec2 boundaries_;
 };

@@ -19,8 +19,8 @@ GameLevel::~GameLevel() {
 }
 
 void GameLevel::render(SpriteRenderer& renderer) {
-    for (Brick& brick : this->bricks) {
-        if (!brick.getIsDestroyed()) {
+    for (Brick& brick : bricks_) {
+        if (!brick.isDestroyed()) {
             brick.render(renderer);
         }
     }
@@ -59,37 +59,33 @@ void GameLevel::initLevel(std::vector<std::vector<int>> tiles, int levelWidth, i
 
             switch (tiles[i][j]) {
             case 1:
-                this->bricks.push_back(Brick(position, size, glm::vec3(0.8f, 0.8f, 0.7f),
-                                             ResourceManager::Instance().getTexture("block_solid"),
-                                             true));
+                bricks_.push_back(Brick(position, size, glm::vec3(0.8f, 0.8f, 0.7f),
+                                        ResourceManager::Instance().texture("block_solid"),
+                                        true));
                 break;
             case 2:
-                this->bricks.push_back(Brick(position, size, glm::vec3(0.2f, 0.6f, 1.0f),
-                                             ResourceManager::Instance().getTexture("block"),
-                                             false));
+                bricks_.push_back(Brick(position, size, glm::vec3(0.2f, 0.6f, 1.0f),
+                                        ResourceManager::Instance().texture("block"),
+                                        false));
                 break;
             case 3:
-                this->bricks.push_back(Brick(position, size, glm::vec3(0.0f, 0.7f, 0.0f),
-                                             ResourceManager::Instance().getTexture("block"),
-                                             false));
+                bricks_.push_back(Brick(position, size, glm::vec3(0.0f, 0.7f, 0.0f),
+                                        ResourceManager::Instance().texture("block"),
+                                        false));
                 break;
             case 4:
-                this->bricks.push_back(Brick(position, size, glm::vec3(0.8f, 0.8f, 0.4f),
-                                             ResourceManager::Instance().getTexture("block"),
-                                             false));
+                bricks_.push_back(Brick(position, size, glm::vec3(0.8f, 0.8f, 0.4f),
+                                        ResourceManager::Instance().texture("block"),
+                                        false));
                 break;
             case 5:
-                this->bricks.push_back(Brick(position, size, glm::vec3(1.0f, 0.5f, 0.0f),
-                                             ResourceManager::Instance().getTexture("block"),
-                                             false));
+                bricks_.push_back(Brick(position, size, glm::vec3(1.0f, 0.5f, 0.0f),
+                                        ResourceManager::Instance().texture("block"),
+                                        false));
                 break;
             default:
                 break;
             }
         }
     }
-}
-
-std::vector<Brick>& GameLevel::getBricks() {
-    return this->bricks;
 }

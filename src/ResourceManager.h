@@ -14,9 +14,6 @@ public:
     void startUp();
     void shutDown();
 
-    std::shared_ptr<ShaderProgram> getShaderProgram(const std::string& name);
-    std::shared_ptr<Texture> getTexture(const std::string& name);
-
     std::shared_ptr<ShaderProgram> createShaderProgram(const std::string& name,
                                                        const Shader& vertexShader,
                                                        const Shader& fragmentShader);
@@ -26,9 +23,19 @@ public:
                                            GLuint height,
                                            GLint channels = 3,
                                            GLuint format = GL_RGB);
+
+    // getters
+    const std::shared_ptr<ShaderProgram> shaderProgram(const std::string& name) {
+        return shaderPrograms_[name];
+    }
+
+    const std::shared_ptr<Texture> texture(const std::string& name) {
+        return textures_[name];
+    }
+
 private:
-    std::map<std::string, std::shared_ptr<ShaderProgram>> shaderPrograms;
-    std::map<std::string, std::shared_ptr<Texture>> textures;
+    std::map<std::string, std::shared_ptr<ShaderProgram>> shaderPrograms_;
+    std::map<std::string, std::shared_ptr<Texture>> textures_;
 
     ResourceManager();
     ~ResourceManager();

@@ -20,20 +20,12 @@ void ResourceManager::startUp() {
 }
 
 void ResourceManager::shutDown() {
-    for (const auto& shader : this->shaderPrograms) {
+    for (const auto& shader : shaderPrograms_) {
         shader.second->destroy();
     }
-    for (const auto& texture : this->textures) {
+    for (const auto& texture : textures_) {
         texture.second->destroy();
     }
-}
-
-std::shared_ptr<ShaderProgram> ResourceManager::getShaderProgram(const std::string& name) {
-    return this->shaderPrograms[name];
-}
-
-std::shared_ptr<Texture> ResourceManager::getTexture(const std::string& name) {
-    return this->textures[name];
 }
 
 std::shared_ptr<ShaderProgram> ResourceManager::createShaderProgram(const std::string& name,
@@ -42,7 +34,7 @@ std::shared_ptr<ShaderProgram> ResourceManager::createShaderProgram(const std::s
     std::shared_ptr<ShaderProgram> shader(new ShaderProgram(
             vertexShader, fragmentShader
     ));
-    this->shaderPrograms[name] = shader;
+    shaderPrograms_[name] = shader;
 
     return shader;
 }
@@ -58,7 +50,7 @@ std::shared_ptr<Texture> ResourceManager::createTexture(const std::string& name,
     std::shared_ptr<Texture> texture(new Texture(
             width, height, image, format
     ));
-    this->textures[name] = texture;
+    textures_[name] = texture;
 
     return texture;
 }

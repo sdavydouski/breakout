@@ -31,7 +31,7 @@ void WindowManager::startUp() {
 }
 
 void WindowManager::shutDown() {
-    for (auto window : this->windows) {
+    for (auto window : windows_) {
         window->destroy();
     }
 
@@ -46,7 +46,7 @@ std::shared_ptr<Window> WindowManager::createWindow(int width,
     std::shared_ptr<Window> window(new Window(
         width, height, title, isFullScreen, vsync
     ));
-    this->windows.push_back(window);
+    windows_.push_back(window);
 
     return window;
 }

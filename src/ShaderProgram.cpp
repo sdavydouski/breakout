@@ -9,12 +9,12 @@
 ShaderProgram::ShaderProgram(const Shader& vertexShader, const Shader& fragmentShader) {
     std::cout << "ShaderProgram constructor" << std::endl;
 
-    this->id = glCreateProgram();
+    id_ = glCreateProgram();
 
-    glAttachShader(this->id, vertexShader.getId());
-    glAttachShader(this->id, fragmentShader.getId());
+    glAttachShader(id_, vertexShader.id());
+    glAttachShader(id_, fragmentShader.id());
 
-    glLinkProgram(this->id);
+    glLinkProgram(id_);
 
     this->checkLinkageStatus();
 }
@@ -27,11 +27,11 @@ ShaderProgram::~ShaderProgram() {
 void ShaderProgram::destroy() {
     std::cout << "ShaderProgram destroy()" << std::endl;
     this->end();
-    glDeleteProgram(this->id);
+    glDeleteProgram(id_);
 }
 
 void ShaderProgram::use() {
-    glUseProgram(this->id);
+    glUseProgram(id_);
 }
 
 void ShaderProgram::end() {
@@ -80,22 +80,22 @@ void ShaderProgram::setUniform(const std::string& name, glm::mat4 value) {
 
 void ShaderProgram::checkLinkageStatus() {
     GLint success;
-    glGetProgramiv(this->id, GL_LINK_STATUS, &success);
+    glGetProgramiv(id_, GL_LINK_STATUS, &success);
 
     if (!success) {
         GLint LOG_LENGTH;
-        glGetProgramiv(this->id, GL_INFO_LOG_LENGTH, &LOG_LENGTH);
+        glGetProgramiv(id_, GL_INFO_LOG_LENGTH, &LOG_LENGTH);
 
         std::vector<GLchar> errorLog((GLuint) LOG_LENGTH);
 
-        glGetProgramInfoLog(this->id, LOG_LENGTH, nullptr, &errorLog[0]);
+        glGetProgramInfoLog(id_, LOG_LENGTH, nullptr, &errorLog[0]);
         std::cerr << &errorLog[0] << std::endl;
         throw std::runtime_error("Shader program linkage failed");
     }
 }
 
 GLint ShaderProgram::getUniformLocation(const std::string& name) {
-    GLint location = glGetUniformLocation(this->id, name.c_str());
+    GLint location = glGetUniformLocation(id_, name.c_str());
 
     if (location == -1) {
         std::cerr << "Unable to find uniform " << name

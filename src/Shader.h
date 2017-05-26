@@ -9,9 +9,11 @@ public:
     Shader(ShaderType type, const std::string& path);
     ~Shader();
 
-    GLuint getId() const;
+    // getters
+    GLuint id() const { return id_; };
+
 private:
-    GLuint id;
+    GLuint id_;
 
     void checkCompilationStatus();
 };

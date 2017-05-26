@@ -11,15 +11,17 @@ public:
     void makeContextCurrent();
     void swapBuffers();
 
-    int getWidth();
-    int getHeight();
+    // getters
+    int width() const { return width_; }
+    int height() const { return height_; }
+
 private:
-    int width;
-    int height;
-    std::string title;
-    bool isFullScreen;
-    bool vsync;
-    GLFWwindow* window;
+    int width_;
+    int height_;
+    std::string title_;
+    bool isFullScreen_;
+    bool vsync_;
+    GLFWwindow* window_;
 
     Window(int width, int height, const std::string& title, bool isFullScreen, bool vsync);
     void destroy();

@@ -10,6 +10,8 @@
 #include "GameLevel.h"
 #include "Player.h"
 #include "Ball.h"
+#include "Direction.h"
+#include "Collision.h"
 #include <memory>
 #include <vector>
 
@@ -24,24 +26,25 @@ public:
 
     bool isExiting();
 private:
-    GameState gameState;
-    std::shared_ptr<Window> window;
-    std::vector<std::shared_ptr<GameLevel>> levels;
-    int currentLevel;
+    GameState gameState_;
+    std::shared_ptr<Window> window_;
+    std::vector<std::shared_ptr<GameLevel>> levels_;
+    int currentLevel_;
 
-    std::shared_ptr<Player> player;
-    std::shared_ptr<Ball> ball;
+    std::shared_ptr<Player> player_;
+    std::shared_ptr<Ball> ball_;
 
-    WindowManager& windowManager = WindowManager::Instance();
-    InputManager& inputManager = InputManager::Instance();
-    ResourceManager& resourceManager = ResourceManager::Instance();
+    WindowManager& windowManager_ = WindowManager::Instance();
+    InputManager& inputManager_ = InputManager::Instance();
+    ResourceManager& resourceManager_ = ResourceManager::Instance();
 
-    SpriteRenderer& spriteRenderer = SpriteRenderer::Instance();
+    SpriteRenderer& spriteRenderer_ = SpriteRenderer::Instance();
 
     void initWindow(int width, int height, bool isFullScreen);
     void initGL();
     void initResources();
 
-    bool checkCollision(const Ball& ball, const Brick& brick);
+    Direction getVectorDirection(const glm::vec2& target);
+    Collision checkCollision(const Ball& ball, const GameObject& brick);
     void checkCollisions();
 };
