@@ -1,9 +1,6 @@
 #include "SpriteRenderer.h"
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <memory>
 #include <iostream>
 
 SpriteRenderer::SpriteRenderer() {
@@ -17,7 +14,7 @@ SpriteRenderer::~SpriteRenderer() {
     glDeleteBuffers(1, &VBO_);
 }
 
-void SpriteRenderer::init(const std::shared_ptr<ShaderProgram> shaderProgram) {
+void SpriteRenderer::init(ShaderProgram* shaderProgram) {
     this->shaderProgram(shaderProgram);
 
     GLfloat vertices[] = {
@@ -45,7 +42,7 @@ void SpriteRenderer::init(const std::shared_ptr<ShaderProgram> shaderProgram) {
     glBindVertexArray(0);
 }
 
-void SpriteRenderer::renderSprite(const std::shared_ptr<Texture> texture,
+void SpriteRenderer::renderSprite(const Texture* texture,
                                   const glm::vec2& position,
                                   const glm::vec2& size,
                                   const glm::vec3& color,

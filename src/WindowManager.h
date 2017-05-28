@@ -10,13 +10,13 @@ public:
     void startUp();
     void shutDown();
 
-    std::shared_ptr<Window> createWindow(int width,
-                                         int height,
-                                         const std::string& title,
-                                         bool isFullScreen = false,
-                                         bool vsync = true);
+    Window* createWindow(int width,
+                         int height,
+                         const std::string& title,
+                         bool isFullScreen = false,
+                         bool vsync = true);
 private:
-    std::vector<std::shared_ptr<Window>> windows_;
+    std::vector<std::unique_ptr<Window>> windows_;
 
     WindowManager();
     ~WindowManager();

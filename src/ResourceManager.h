@@ -14,28 +14,28 @@ public:
     void startUp();
     void shutDown();
 
-    std::shared_ptr<ShaderProgram> createShaderProgram(const std::string& name,
-                                                       const Shader& vertexShader,
-                                                       const Shader& fragmentShader);
-    std::shared_ptr<Texture> createTexture(const std::string& name,
-                                           const std::string& path,
-                                           GLuint width,
-                                           GLuint height,
-                                           GLint channels = 3,
-                                           GLuint format = GL_RGB);
+    ShaderProgram* createShaderProgram(const std::string& name,
+                                       const Shader& vertexShader,
+                                       const Shader& fragmentShader);
+    Texture* createTexture(const std::string& name,
+                           const std::string& path,
+                           GLuint width,
+                           GLuint height,
+                           GLint channels = 3,
+                           GLuint format = GL_RGB);
 
     // getters
-    const std::shared_ptr<ShaderProgram> shaderProgram(const std::string& name) {
-        return shaderPrograms_[name];
+    ShaderProgram* shaderProgram(const std::string& name) {
+        return shaderPrograms_[name].get();
     }
 
-    const std::shared_ptr<Texture> texture(const std::string& name) {
-        return textures_[name];
+    Texture* texture(const std::string& name) {
+        return textures_[name].get();
     }
 
 private:
-    std::map<std::string, std::shared_ptr<ShaderProgram>> shaderPrograms_;
-    std::map<std::string, std::shared_ptr<Texture>> textures_;
+    std::map<std::string, std::unique_ptr<ShaderProgram>> shaderPrograms_;
+    std::map<std::string, std::unique_ptr<Texture>> textures_;
 
     ResourceManager();
     ~ResourceManager();

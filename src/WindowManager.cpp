@@ -31,22 +31,20 @@ void WindowManager::startUp() {
 }
 
 void WindowManager::shutDown() {
-    for (auto window : windows_) {
+    for (auto& window : windows_) {
         window->destroy();
     }
 
     glfwTerminate();
 }
 
-std::shared_ptr<Window> WindowManager::createWindow(int width,
-                                                    int height,
-                                                    const std::string& title,
-                                                    bool isFullScreen,
-                                                    bool vsync) {
-    std::shared_ptr<Window> window(new Window(
-        width, height, title, isFullScreen, vsync
-    ));
-    windows_.push_back(window);
+Window* WindowManager::createWindow(int width,
+                                    int height,
+                                    const std::string& title,
+                                    bool isFullScreen,
+                                    bool vsync) {
+    // cannot use make_unique with private constructor even inside a friend class
+    windows_.push_back(std::unique_ptr<Window>(new Window(width, height, title, isFullScreen, vsync)));
 
-    return window;
+    return windows_.back().get();
 }

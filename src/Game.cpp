@@ -1,20 +1,15 @@
 #include "Game.h"
-#include "GameState.h"
-#include "ResourceManager.h"
 #include "ShaderProgram.h"
 #include "Shader.h"
 #include "ShaderType.h"
 #include "Window.h"
-#include "Direction.h"
-#include "Collision.h"
-#include <GL/glew.h>
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <tuple>
 #include <cmath>
 #include <iostream>
 
-const glm::vec2 INITIAL_BALL_VELOCITY(100.0f, -350.0f);
+const glm::vec2 INITIAL_BALL_VELOCITY(250.0f, -650.0f);
 float INITIAL_PLAYER_VELOCITY = 500.0f;
 
 Game::Game(int width, int height, bool isFullScreen)
@@ -108,10 +103,10 @@ void Game::initGL() {
 
 void Game::initResources() {
     auto shader = resourceManager_.createShaderProgram("sprite",
-                                                            Shader(ShaderType::VERTEX,
-                                                                   "../resources/shaders/sprite/shader.vert"),
-                                                            Shader(ShaderType::FRAGMENT,
-                                                                   "../resources/shaders/sprite/shader.frag"));
+                                                        Shader(ShaderType::VERTEX,
+                                                                "../resources/shaders/sprite/shader.vert"),
+                                                        Shader(ShaderType::FRAGMENT,
+                                                                "../resources/shaders/sprite/shader.frag"));
     glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(window_->width()),
                                       static_cast<GLfloat>(window_->height()), 0.0f,
                                       -1.0f, 1.0f);
@@ -137,15 +132,15 @@ void Game::initResources() {
                                    "../resources/textures/paddle.png",
                                    512, 128, 4, GL_RGBA);
 
-    levels_.push_back(std::shared_ptr<GameLevel>(new GameLevel(
-            "../resources/levels/1.txt", window_->width(), window_->height() / 2)));
-    levels_.push_back(std::shared_ptr<GameLevel>(new GameLevel(
-            "../resources/levels/2.txt", window_->width(), window_->height() / 2)));
-    levels_.push_back(std::shared_ptr<GameLevel>(new GameLevel(
-            "../resources/levels/3.txt", window_->width(), window_->height() / 2)));
-    levels_.push_back(std::shared_ptr<GameLevel>(new GameLevel(
-            "../resources/levels/4.txt", window_->width(), window_->height() / 2)));
-    currentLevel_ = 2;
+    levels_.push_back(std::make_unique<GameLevel>(
+        "../resources/levels/1.txt", window_->width(), window_->height() / 2));
+    levels_.push_back(std::make_unique<GameLevel>(
+        "../resources/levels/2.txt", window_->width(), window_->height() / 2));
+    levels_.push_back(std::make_unique<GameLevel>(
+        "../resources/levels/3.txt", window_->width(), window_->height() / 2));
+    levels_.push_back(std::make_unique<GameLevel>(
+        "../resources/levels/4.txt", window_->width(), window_->height() / 2));
+    currentLevel_ = 0;
 
     glm::vec2 playerSize = glm::vec2(120, 20);
     glm::vec2 playerPosition = glm::vec2(
@@ -153,28 +148,24 @@ void Game::initResources() {
             window_->height() - playerSize.y
     );
 
-    player_ = std::shared_ptr<Player>(new Player(playerPosition,
-                                                      playerSize,
-                                                      glm::vec3(1.0f),
-                                                      resourceManager_.texture("paddle"),
-                                                      INITIAL_PLAYER_VELOCITY,
-                                                      glm::vec2(0, window_->width() - playerSize.x)
-                                           )
-    );
+    player_ = std::make_unique<Player>(playerPosition,
+                                       playerSize,
+                                       glm::vec3(1.0f),
+                                       resourceManager_.texture("paddle"),
+                                       INITIAL_PLAYER_VELOCITY,
+                                       glm::vec2(0, window_->width() - playerSize.x));
 
     float ballRadius = 15.0f;
 
-    ball_ = std::shared_ptr<Ball>(new Ball(playerPosition + glm::vec2(playerSize.x / 2 - ballRadius,
-                                                                           -2 * ballRadius),
-                                                ballRadius,
-                                                glm::vec3(1.0f),
-                                                resourceManager_.texture("face"),
-                                                INITIAL_BALL_VELOCITY,
-                                                glm::vec4(0.0f, window_->width(), 0.0f, window_->height())
-                                       )
-    );
+    ball_ = std::make_unique<Ball>(playerPosition + glm::vec2(playerSize.x / 2 - ballRadius, -2 * ballRadius),
+                                   ballRadius,
+                                   glm::vec3(1.0f),
+                                   resourceManager_.texture("face"),
+                                   INITIAL_BALL_VELOCITY,
+                                   glm::vec4(0.0f, window_->width(), 0.0f, window_->height()));
 }
 
+// todo: move these functions out of the Game class
 Direction Game::getVectorDirection(const glm::vec2& target) {
     glm::vec2 compass[] = {
         glm::vec2(0.0f, 1.0f),	// up
@@ -220,14 +211,14 @@ Collision Game::checkCollision(const Ball& ball, const GameObject& gameObject) {
 }
 
 void Game::checkCollisions() {
-    for (Brick& brick : levels_[currentLevel_]->bricks()) {
-        if (brick.isDestroyed()) continue;
+    for (auto& brick : levels_[currentLevel_]->bricks()) {
+        if (brick->isDestroyed()) continue;
 
-        Collision collision = this->checkCollision(*ball_, brick);
+        Collision collision = this->checkCollision(*ball_, *brick.get());
         if (!std::get<0>(collision)) continue;      // if there is no collision...
 
-        if (!brick.isSolid()) {
-            brick.isDestroyed(true);
+        if (!brick->isSolid()) {
+            brick->isDestroyed(true);
         }
 
         // Collision resolution

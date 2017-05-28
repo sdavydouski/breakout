@@ -4,14 +4,13 @@
 #include "SpriteRenderer.h"
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
-#include <memory>
 
 class GameObject {
 public:
     GameObject(const glm::vec2& position,
                const glm::vec2& size,
                const glm::vec3& color,
-               std::shared_ptr<Texture> sprite);
+               Texture* sprite);
     virtual ~GameObject();
 
     virtual void render(const SpriteRenderer& renderer);
@@ -19,7 +18,7 @@ public:
     // getters
     const glm::vec2& position() const { return position_; };
     const glm::vec2& size() const { return size_; };
-    const glm::vec2& color() const { return color_; };
+    const glm::vec3& color() const { return color_; };
 
     // setters
     void position(const glm::vec2& position) { position_ = position; }
@@ -32,5 +31,5 @@ protected:
     glm::vec2 position_;        // top-left position
     glm::vec2 size_;
     glm::vec3 color_;
-    std::shared_ptr<Texture> sprite_;
+    Texture* sprite_;
 };

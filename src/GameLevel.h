@@ -3,6 +3,7 @@
 #include "SpriteRenderer.h"
 #include "Brick.h"
 #include <string>
+#include <memory>
 #include <vector>
 
 class GameLevel {
@@ -14,10 +15,10 @@ public:
     bool isCompleted();
 
     // getters
-    std::vector<Brick>& bricks() { return bricks_; }
+    std::vector<std::unique_ptr<Brick>>& bricks() { return bricks_; }
 private:
-    std::vector<Brick> bricks_;
+    std::vector<std::unique_ptr<Brick>> bricks_;
 
     std::vector<std::vector<int>> loadTiles(const std::string& path);
-    void initLevel(std::vector<std::vector<int>> tiles, int levelWidth, int levelHeight);
+    void initLevel(std::vector<std::vector<int>>& tiles, int levelWidth, int levelHeight);
 };

@@ -27,12 +27,12 @@ public:
     bool isExiting();
 private:
     GameState gameState_;
-    std::shared_ptr<Window> window_;
-    std::vector<std::shared_ptr<GameLevel>> levels_;
+    Window* window_;
+    std::vector<std::unique_ptr<GameLevel>> levels_;
     int currentLevel_;
 
-    std::shared_ptr<Player> player_;
-    std::shared_ptr<Ball> ball_;
+    std::unique_ptr<Player> player_;
+    std::unique_ptr<Ball> ball_;
 
     WindowManager& windowManager_ = WindowManager::Instance();
     InputManager& inputManager_ = InputManager::Instance();

@@ -9,7 +9,7 @@ public:
     Ball(const glm::vec2& position,
          float radius,
          const glm::vec3& color,
-         std::shared_ptr<Texture> sprite,
+         Texture* sprite,
          const glm::vec2& velocity,
          const glm::vec4& boundaries);
     ~Ball();
@@ -23,7 +23,7 @@ public:
     const glm::vec4& boundaries() const { return boundaries_; }
 
     // setters
-    void velocity(const glm::vec2 velocity) { velocity_ = velocity; }
+    void velocity(const glm::vec2& velocity) { velocity_ = velocity; }
     void velocityX(float x) { velocity_.x = x; }
     void velocityY(float y) { velocity_.y = y; }
     void isStuck(bool isStuck) { isStuck_ = isStuck; }

@@ -20,37 +20,35 @@ void ResourceManager::startUp() {
 }
 
 void ResourceManager::shutDown() {
-    for (const auto& shader : shaderPrograms_) {
+    for (auto& shader : shaderPrograms_) {
         shader.second->destroy();
     }
-    for (const auto& texture : textures_) {
+    for (auto& texture : textures_) {
         texture.second->destroy();
     }
 }
 
-std::shared_ptr<ShaderProgram> ResourceManager::createShaderProgram(const std::string& name,
-                                                                    const Shader& vertexShader,
-                                                                    const Shader& fragmentShader) {
-    std::shared_ptr<ShaderProgram> shader(new ShaderProgram(
-            vertexShader, fragmentShader
-    ));
-    shaderPrograms_[name] = shader;
+ShaderProgram* ResourceManager::createShaderProgram(const std::string& name,
+                                                    const Shader& vertexShader,
+                                                    const Shader& fragmentShader) {
+    shaderPrograms_[name] = std::unique_ptr<ShaderProgram>(
+        new ShaderProgram(vertexShader, fragmentShader)
+    );
 
-    return shader;
+    return shaderPrograms_[name].get();
 }
 
-std::shared_ptr<Texture> ResourceManager::createTexture(const std::string& name,
-                                                        const std::string& path,
-                                                        GLuint width,
-                                                        GLuint height,
-                                                        GLint channels,
-                                                        GLuint format) {
+Texture* ResourceManager::createTexture(const std::string& name,
+                                        const std::string& path,
+                                        GLuint width,
+                                        GLuint height,
+                                        GLint channels,
+                                        GLuint format) {
     unsigned char *image = FileManager::Instance().readImage(path, width, height, channels);
 
-    std::shared_ptr<Texture> texture(new Texture(
-            width, height, image, format
-    ));
-    textures_[name] = texture;
+    textures_[name] = std::unique_ptr<Texture>(
+        new Texture(width, height, image, format)
+    );
 
-    return texture;
+    return textures_[name].get();
 }
