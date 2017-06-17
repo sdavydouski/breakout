@@ -3,6 +3,9 @@
 #include "Shader.h"
 #include "ShaderType.h"
 #include "Window.h"
+#include "Collision.h"
+#include "Direction.h"
+#include "CollisionDetector.h"
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <tuple>
@@ -165,56 +168,12 @@ void Game::initResources() {
                                    glm::vec4(0.0f, window_->width(), 0.0f, window_->height()));
 }
 
-// todo: move these functions out of the Game class
-Direction Game::getVectorDirection(const glm::vec2& target) {
-    glm::vec2 compass[] = {
-        glm::vec2(0.0f, 1.0f),	// up
-        glm::vec2(0.0f, -1.0f),	// down
-        glm::vec2(-1.0f, 0.0f),	// left
-        glm::vec2(1.0f, 0.0f)	// right
-    };
-
-    float max = 0.0f;
-    int bestMatch = -1;
-    for (GLuint i = 0; i < 4; i++) {
-        float dotProduct = glm::dot(glm::normalize(target), compass[i]);
-        if (dotProduct > max) {
-            max = dotProduct;
-            bestMatch = i;
-        }
-    }
-
-    return static_cast<Direction>(bestMatch);
-}
-
-// AABB - Circle collision
-Collision Game::checkCollision(const Ball& ball, const GameObject& gameObject) {
-    // Get center point circle first
-    glm::vec2 center = ball.position() + ball.radius();
-    // Calculate AABB info (center, half-extents)
-    glm::vec2 aabbHalfExtents(gameObject.size().x / 2, gameObject.size().y / 2);
-    glm::vec2 aabbCenter(
-        gameObject.position().x + aabbHalfExtents.x,
-        gameObject.position().y + aabbHalfExtents.y
-    );
-    // Get difference vector between both centers
-    glm::vec2 difference = center - aabbCenter;
-    glm::vec2 clamped = glm::clamp(difference, -aabbHalfExtents, aabbHalfExtents);
-    // Add clamped value to AABB_center and we get the value of box closest to circle
-    glm::vec2 closest = aabbCenter + clamped;
-    // Retrieve vector between center circle and closest point AABB and check if length <= radius
-    difference = closest - center;
-
-    return glm::length(difference) <= ball.radius() ?
-               std::make_tuple(true, this->getVectorDirection(difference), difference) :
-               std::make_tuple(false, Direction::UP, glm::vec2(0, 0));
-}
-
 void Game::checkCollisions() {
+    // check collisions with the bricks
     for (auto& brick : levels_[currentLevel_]->bricks()) {
         if (brick->isDestroyed()) continue;
 
-        Collision collision = this->checkCollision(*ball_, *brick.get());
+        Collision collision = CollisionDetector::checkCollision(*ball_, *brick.get());
         if (!std::get<0>(collision)) continue;      // if there is no collision...
 
         if (!brick->isSolid()) {
@@ -245,7 +204,8 @@ void Game::checkCollisions() {
         }
     }
 
-    Collision collision = this->checkCollision(*ball_, *player_);
+    // check collision with the paddle
+    Collision collision = CollisionDetector::checkCollision(*ball_, *player_);
     if (std::get<0>(collision) && !ball_->isStuck()) {
         // Check where it hit the board, and change velocity based on where it hit the board
         float centerBoard = player_->position().x + player_->size().x / 2;

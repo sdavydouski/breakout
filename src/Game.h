@@ -10,8 +10,6 @@
 #include "GameLevel.h"
 #include "Player.h"
 #include "Ball.h"
-#include "Direction.h"
-#include "Collision.h"
 #include <memory>
 #include <vector>
 
@@ -44,7 +42,5 @@ private:
     void initGL();
     void initResources();
 
-    Direction getVectorDirection(const glm::vec2& target);
-    Collision checkCollision(const Ball& ball, const GameObject& brick);
     void checkCollisions();
 };
