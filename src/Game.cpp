@@ -64,6 +64,7 @@ void Game::input(GLfloat delta) {
 
 void Game::update(GLfloat delta) {
     ball_->update(delta);
+    particleEmitter_->update(delta, *ball_, 5, glm::vec2(ball_->radius() / 2));
     this->checkCollisions();
 }
 
@@ -75,6 +76,7 @@ void Game::render() {
 
         levels_[currentLevel_]->render(spriteRenderer_);
         player_->render(spriteRenderer_);
+        particleEmitter_->render();
         ball_->render(spriteRenderer_);
     }
 
@@ -105,19 +107,28 @@ void Game::initGL() {
 }
 
 void Game::initResources() {
-    auto shader = resourceManager_.createShaderProgram("sprite",
-                                                        Shader(ShaderType::VERTEX,
-                                                                "../resources/shaders/sprite/shader.vert"),
-                                                        Shader(ShaderType::FRAGMENT,
-                                                                "../resources/shaders/sprite/shader.frag"));
+    auto spriteShader = resourceManager_.createShaderProgram("sprite",
+                                                             Shader(ShaderType::VERTEX,
+                                                                     "../resources/shaders/sprite/shader.vert"),
+                                                             Shader(ShaderType::FRAGMENT,
+                                                                     "../resources/shaders/sprite/shader.frag"));
     glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(window_->width()),
                                       static_cast<GLfloat>(window_->height()), 0.0f,
                                       -1.0f, 1.0f);
-    shader->use();
-    shader->setUniform("projection", projection);
-    shader->setUniform("image", 0);
+    spriteShader->use();
+    spriteShader->setUniform("projection", projection);
+    spriteShader->setUniform("sprite", 0);
 
-    spriteRenderer_.init(shader);
+    spriteRenderer_.init(spriteShader);
+
+    auto particleShader = resourceManager_.createShaderProgram("particle",
+                                                               Shader(ShaderType::VERTEX,
+                                                                      "../resources/shaders/particle/shader.vert"),
+                                                               Shader(ShaderType::FRAGMENT,
+                                                                      "../resources/shaders/particle/shader.frag"));
+    particleShader->use();
+    particleShader->setUniform("projection", projection);
+    particleShader->setUniform("sprite", 0);
 
     resourceManager_.createTexture("background",
                                    "../resources/textures/background.jpg",
@@ -134,6 +145,13 @@ void Game::initResources() {
     resourceManager_.createTexture("paddle",
                                    "../resources/textures/paddle.png",
                                    512, 128, 4, GL_RGBA);
+    resourceManager_.createTexture("particle",
+                                   "../resources/textures/particle.png",
+                                   500, 500, 4, GL_RGBA);
+
+    particleEmitter_ = std::make_unique<ParticleEmitter>(resourceManager_.shaderProgram("particle"),
+                                                         resourceManager_.texture("particle"),
+                                                         500);
 
     levels_.push_back(std::make_unique<GameLevel>(
         "../resources/levels/1.txt", window_->width(), window_->height() / 2));

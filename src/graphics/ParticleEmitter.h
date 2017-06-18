@@ -2,8 +2,8 @@
 
 #include "Texture.h"
 #include "ShaderProgram.h"
-#include "../game/GameObject.h"
 #include "Particle.h"
+#include "../game/Ball.h"
 #include <GL/glew.h>
 #include <vector>
 
@@ -13,7 +13,7 @@ public:
     ~ParticleEmitter();
 
     void update(float delta,
-                const GameObject& object,
+                const Ball& object,
                 int newParticles,
                 const glm::vec2 offset = glm::vec2(0.0f));
     void render();
@@ -26,8 +26,10 @@ private:
     GLuint VAO_;
     GLuint VBO_;
 
+    GLuint lastUsedParticle_;
+
     GLuint getFirstUnusedParticle();
-    void respawnParticle(const Particle& particle,
-                         const GameObject& object,
+    void respawnParticle(Particle& particle,
+                         const Ball& object,
                          const glm::vec2& offset = glm::vec2(0.0f));
 };

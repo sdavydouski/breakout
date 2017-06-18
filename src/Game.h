@@ -10,6 +10,7 @@
 #include "game/GameLevel.h"
 #include "game/Player.h"
 #include "game/Ball.h"
+#include "graphics/ParticleEmitter.h"
 #include <memory>
 #include <vector>
 
@@ -37,6 +38,7 @@ private:
     ResourceManager& resourceManager_ = ResourceManager::Instance();
 
     SpriteRenderer& spriteRenderer_ = SpriteRenderer::Instance();
+    std::unique_ptr<ParticleEmitter> particleEmitter_;
 
     void initWindow(int width, int height, bool isFullScreen);
     void initGL();

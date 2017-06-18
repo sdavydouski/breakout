@@ -8,7 +8,7 @@ out vec2 uv;
 uniform mat4 projection;
 uniform vec2 offset;
 
-float scale = 10.0f;
+float scale = 15.0f;
 
 void main() {
     uv = vertex.zw;
