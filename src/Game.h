@@ -1,15 +1,15 @@
 #pragma once
 
 #include <GL/glew.h>
-#include "GameState.h"
-#include "SpriteRenderer.h"
+#include "game/GameState.h"
+#include "graphics/SpriteRenderer.h"
 #include "ResourceManager.h"
-#include "InputManager.h"
+#include "input/InputManager.h"
 #include "WindowManager.h"
 #include "Window.h"
-#include "GameLevel.h"
-#include "Player.h"
-#include "Ball.h"
+#include "game/GameLevel.h"
+#include "game/Player.h"
+#include "game/Ball.h"
 #include <memory>
 #include <vector>
 

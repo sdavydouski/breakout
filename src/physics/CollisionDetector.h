@@ -2,8 +2,8 @@
 
 #include "Collision.h"
 #include "Direction.h"
-#include "GameObject.h"
-#include "Ball.h"
+#include "../game/GameObject.h"
+#include "../game/Ball.h"
 
 class CollisionDetector {
 public:

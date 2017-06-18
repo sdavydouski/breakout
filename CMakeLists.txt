@@ -5,7 +5,7 @@ find_package(OpenGL REQUIRED)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
-set(SOURCES src/main.cpp src/WindowManager.cpp src/WindowManager.h src/Window.cpp src/Window.h src/Shader.cpp src/Shader.h src/ShaderType.h src/ShaderProgram.cpp src/ShaderProgram.h src/FileManager.cpp src/FileManager.h src/Texture.cpp src/Texture.h src/ResourceManager.cpp src/ResourceManager.h src/InputManager.cpp src/InputManager.h src/EventHandlers.h src/Game.cpp src/Game.h src/GameState.h src/SpriteRenderer.cpp src/SpriteRenderer.h src/Singleton.h src/GameObject.cpp src/GameObject.h src/Brick.cpp src/Brick.h src/GameLevel.cpp src/GameLevel.h src/Player.cpp src/Player.h src/Ball.cpp src/Ball.h src/Direction.h src/Collision.h src/CollisionDetector.cpp src/CollisionDetector.h)
+set(SOURCES src/main.cpp src/WindowManager.cpp src/WindowManager.h src/Window.cpp src/Window.h src/graphics/Shader.cpp src/graphics/Shader.h src/graphics/ShaderType.h src/graphics/ShaderProgram.cpp src/graphics/ShaderProgram.h src/FileManager.cpp src/FileManager.h src/graphics/Texture.cpp src/graphics/Texture.h src/ResourceManager.cpp src/ResourceManager.h src/input/InputManager.cpp src/input/InputManager.h src/input/EventHandlers.h src/Game.cpp src/Game.h src/game/GameState.h src/graphics/SpriteRenderer.cpp src/graphics/SpriteRenderer.h src/Singleton.h src/game/GameObject.cpp src/game/GameObject.h src/game/Brick.cpp src/game/Brick.h src/game/GameLevel.cpp src/game/GameLevel.h src/game/Player.cpp src/game/Player.h src/game/Ball.cpp src/game/Ball.h src/physics/Direction.h src/physics/Collision.h src/physics/CollisionDetector.cpp src/physics/CollisionDetector.h src/graphics/Particle.h src/graphics/ParticleEmitter.cpp src/graphics/ParticleEmitter.h)
 
 # GLFW build configuration
 

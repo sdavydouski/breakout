@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Texture.h"
-#include "SpriteRenderer.h"
+#include "../graphics/Texture.h"
+#include "../graphics/SpriteRenderer.h"
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 

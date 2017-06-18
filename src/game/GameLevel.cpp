@@ -1,6 +1,6 @@
 #include "GameLevel.h"
-#include "FileManager.h"
-#include "ResourceManager.h"
+#include "../FileManager.h"
+#include "../ResourceManager.h"
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <sstream>

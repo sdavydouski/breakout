@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SpriteRenderer.h"
+#include "../graphics/SpriteRenderer.h"
 #include "Brick.h"
 #include <string>
 #include <memory>

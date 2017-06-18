@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Singleton.h"
+#include "../Singleton.h"
 #include "EventHandlers.h"
 #include <map>
 #include <string>

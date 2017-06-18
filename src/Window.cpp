@@ -1,5 +1,5 @@
 #include "Window.h"
-#include "InputManager.h"
+#include "input/InputManager.h"
 #include <iostream>
 
 Window::Window(int width, int height, const std::string& title, bool isFullScreen, bool vsync)

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Singleton.h"
+#include "../Singleton.h"
 #include "ShaderProgram.h"
 #include "Texture.h"
 #include <GL/glew.h>

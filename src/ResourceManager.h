@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Singleton.h"
-#include "ShaderProgram.h"
-#include "Shader.h"
-#include "Texture.h"
+#include "graphics/ShaderProgram.h"
+#include "graphics/Shader.h"
+#include "graphics/Texture.h"
 #include <GL/glew.h>
 #include <memory>
 #include <map>

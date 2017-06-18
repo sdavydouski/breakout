@@ -1,18 +1,18 @@
 #include "Game.h"
-#include "ShaderProgram.h"
-#include "Shader.h"
-#include "ShaderType.h"
+#include "graphics/ShaderProgram.h"
+#include "graphics/Shader.h"
+#include "graphics/ShaderType.h"
 #include "Window.h"
-#include "Collision.h"
-#include "Direction.h"
-#include "CollisionDetector.h"
+#include "physics/Collision.h"
+#include "physics/Direction.h"
+#include "physics/CollisionDetector.h"
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <tuple>
 #include <cmath>
 #include <iostream>
 
-const glm::vec2 INITIAL_BALL_VELOCITY(250.0f, -650.0f);
+const glm::vec2 INITIAL_BALL_VELOCITY(200.0f, -550.0f);
 float INITIAL_PLAYER_VELOCITY = 500.0f;
 
 Game::Game(int width, int height, bool isFullScreen)
