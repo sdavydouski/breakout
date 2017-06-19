@@ -2,4 +2,4 @@
 
 #include <functional>
 
-typedef std::function <void (float delta)> KeyHandler;
+using KeyHandler = std::function <void (float delta)>;
