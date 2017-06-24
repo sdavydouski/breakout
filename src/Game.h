@@ -11,6 +11,7 @@
 #include "game/Player.h"
 #include "game/Ball.h"
 #include "graphics/ParticleEmitter.h"
+#include "graphics/PostProcessor.h"
 #include <memory>
 #include <vector>
 
@@ -39,6 +40,7 @@ private:
 
     SpriteRenderer& spriteRenderer_ = SpriteRenderer::Instance();
     std::unique_ptr<ParticleEmitter> particleEmitter_;
+    std::unique_ptr<PostProcessor> postProcessor_;
 
     void initWindow(int width, int height, bool isFullScreen);
     void initGL();

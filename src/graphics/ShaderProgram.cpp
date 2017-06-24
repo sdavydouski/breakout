@@ -78,6 +78,46 @@ void ShaderProgram::setUniform(const std::string& name, glm::mat4 value) {
     glUniformMatrix4fv(this->getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(value));
 }
 
+void ShaderProgram::setUniform(const std::string& name, GLsizei count, GLboolean* values) {
+    glUniform1iv(this->getUniformLocation(name), count, (GLint*) values);
+}
+
+void ShaderProgram::setUniform(const std::string& name, GLsizei count, GLint* values) {
+    glUniform1iv(this->getUniformLocation(name), count, values);
+}
+
+void ShaderProgram::setUniform(const std::string& name, GLsizei count, GLuint* values) {
+    glUniform1iv(this->getUniformLocation(name), count, (GLint*) values);
+}
+
+void ShaderProgram::setUniform(const std::string& name, GLsizei count, GLfloat* values) {
+    glUniform1fv(this->getUniformLocation(name), count, values);
+}
+
+void ShaderProgram::setUniform(const std::string& name, GLsizei count, glm::vec2* values) {
+    glUniform2fv(this->getUniformLocation(name), count, &values[0].x);
+}
+
+void ShaderProgram::setUniform(const std::string& name, GLsizei count, glm::vec3* values) {
+    glUniform3fv(this->getUniformLocation(name), count, &values[0].x);
+}
+
+void ShaderProgram::setUniform(const std::string& name, GLsizei count, glm::vec4* values) {
+    glUniform4fv(this->getUniformLocation(name), count, &values[0].x);
+}
+
+void ShaderProgram::setUniform(const std::string& name, GLsizei count, glm::mat2* values) {
+    glUniformMatrix2fv(this->getUniformLocation(name), count, GL_FALSE, &values[0][0].x);
+}
+
+void ShaderProgram::setUniform(const std::string& name, GLsizei count, glm::mat3* values) {
+    glUniformMatrix3fv(this->getUniformLocation(name), count, GL_FALSE, &values[0][0].x);
+}
+
+void ShaderProgram::setUniform(const std::string& name, GLsizei count, glm::mat4* values) {
+    glUniformMatrix4fv(this->getUniformLocation(name), count, GL_FALSE, &values[0][0].x);
+}
+
 void ShaderProgram::checkLinkageStatus() {
     GLint success;
     glGetProgramiv(id_, GL_LINK_STATUS, &success);

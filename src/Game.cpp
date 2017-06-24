@@ -15,6 +15,8 @@
 const glm::vec2 INITIAL_BALL_VELOCITY(200.0f, -550.0f);
 float INITIAL_PLAYER_VELOCITY = 500.0f;
 
+GLfloat shakeTime = 0.0f;
+
 Game::Game(int width, int height, bool isFullScreen)
     : gameState_(GameState::GAME_ACTIVE) {
     std::cout << "Game constructor" << std::endl;
@@ -66,10 +68,19 @@ void Game::update(GLfloat delta) {
     ball_->update(delta);
     particleEmitter_->update(delta, *ball_, 5, glm::vec2(ball_->radius() / 2));
     this->checkCollisions();
+
+    if (shakeTime > 0.0f) {
+        shakeTime -= delta;
+        if (shakeTime <= 0.0f) {
+            postProcessor_->disableEffects(PostProcessingEffect::Shake);
+        }
+    }
 }
 
 void Game::render() {
     if (gameState_ == GameState::GAME_ACTIVE) {
+        postProcessor_->beginRender();
+
         spriteRenderer_.renderSprite(resourceManager_.texture("background"),
                                      glm::vec2(0.0f, 0.0f),
                                      glm::vec2(window_->width(), window_->height()));
@@ -78,6 +89,9 @@ void Game::render() {
         player_->render(spriteRenderer_);
         particleEmitter_->render();
         ball_->render(spriteRenderer_);
+
+        postProcessor_->endRender();
+        postProcessor_->render(glfwGetTime());
     }
 
     window_->swapBuffers();
@@ -130,6 +144,12 @@ void Game::initResources() {
     particleShader->setUniform("projection", projection);
     particleShader->setUniform("sprite", 0);
 
+    resourceManager_.createShaderProgram("postprocessing",
+                                         Shader(ShaderType::VERTEX,
+                                                "../resources/shaders/postprocessing/shader.vert"),
+                                         Shader(ShaderType::FRAGMENT,
+                                                "../resources/shaders/postprocessing/shader.frag"));
+
     resourceManager_.createTexture("background",
                                    "../resources/textures/background.jpg",
                                    1600, 900);
@@ -152,6 +172,8 @@ void Game::initResources() {
     particleEmitter_ = std::make_unique<ParticleEmitter>(resourceManager_.shaderProgram("particle"),
                                                          resourceManager_.texture("particle"),
                                                          500);
+    postProcessor_ = std::make_unique<PostProcessor>(resourceManager_.shaderProgram("postprocessing"),
+                                                     window_->width(), window_->height());
 
     levels_.push_back(std::make_unique<GameLevel>(
         "../resources/levels/1.txt", window_->width(), window_->height() / 2));
@@ -197,6 +219,9 @@ void Game::checkCollisions() {
         if (!brick->isSolid()) {
             brick->isDestroyed(true);
         }
+
+        shakeTime = 0.2f;
+        postProcessor_->enableEffects(PostProcessingEffect::Shake);
 
         // Collision resolution
         Direction direction = std::get<1>(collision);
