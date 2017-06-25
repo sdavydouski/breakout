@@ -24,6 +24,18 @@ Collision CollisionDetector::checkCollision(const Ball &ball, const GameObject &
            std::make_tuple(false, Direction::UP, glm::vec2(0, 0));
 }
 
+// AABB - AABB collision
+bool CollisionDetector::checkCollision(const GameObject& gameObject1, const GameObject& gameObject2) {
+    // Collision x-axis
+    bool collisionX = gameObject1.position().x + gameObject1.size().x >= gameObject2.position().x &&
+                      gameObject2.position().x + gameObject2.size().x >= gameObject1.position().x;
+    // Collision y-axis
+    bool collisionY = gameObject1.position().y + gameObject1.size().y >= gameObject2.position().y &&
+                      gameObject2.position().y + gameObject2.size().y >= gameObject1.position().y;
+    // Collision only if on both axes
+    return collisionX && collisionY;
+}
+
 Direction CollisionDetector::getVectorDirection(const glm::vec2 &target) {
     glm::vec2 compass[] = {
         glm::vec2(0.0f, 1.0f),	// up

@@ -27,6 +27,14 @@ public:
     void updatePositionX(float delta) { position_.x += delta; }
     void updatePositionY(float delta) { position_.y += delta; }
 
+    void size(const glm::vec2& size) { size_ = size; }
+    void sizeX(float x) { size_.x = x; }
+    void sizeY(float y) { size_.y = y; }
+    void updateSizeX(float delta) { size_.x += delta; }
+    void updateSizeY(float delta) { size_.y += delta; }
+
+    void color(const glm::vec3& color) { color_ = color; }
+
 protected:
     glm::vec2 position_;        // top-left position
     glm::vec2 size_;

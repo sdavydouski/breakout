@@ -20,17 +20,24 @@ public:
     float radius() const { return radius_; }
     const glm::vec2& velocity() const { return velocity_; }
     bool isStuck() const { return isStuck_; }
+    bool isSticky() const { return isSticky_; }
+    bool isPassingThrough() const { return isPassingThrough_; }
     const glm::vec4& boundaries() const { return boundaries_; }
 
     // setters
     void velocity(const glm::vec2& velocity) { velocity_ = velocity; }
+    void velocity(float scale) { velocity_ *= scale; }
     void velocityX(float x) { velocity_.x = x; }
     void velocityY(float y) { velocity_.y = y; }
     void isStuck(bool isStuck) { isStuck_ = isStuck; }
+    void isSticky(bool isSticky) { isSticky_ = isSticky; }
+    void isPassingThrough(bool isPassingThrough) { isPassingThrough_ = isPassingThrough; }
 
 private:
     float radius_;
     glm::vec2 velocity_;
     bool isStuck_;
+    bool isSticky_;
+    bool isPassingThrough_;
     glm::vec4 boundaries_;
 };

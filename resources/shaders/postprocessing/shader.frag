@@ -15,29 +15,38 @@ uniform bool shake;
 void main() {
     finalColor = vec4(0.0f);
     vec3 textureSample[9];
-    // textureSample from texture offsets if using convolution matrix
-    if(chaos || shake) {
+
+    if (chaos || shake) {
         for(int i = 0; i < 9; i++) {
-            textureSample[i] = vec3(texture(scene, uv.st + offsets[i]));
+            if (confuse) {
+                textureSample[i] = vec3(1.0f - texture(scene, uv.st + offsets[i]));
+            } else {
+                textureSample[i] = vec3(texture(scene, uv.st + offsets[i]));
+            }
         }
     }
+
     // process effects
-    if(chaos) {
+    if (chaos) {
         for(int i = 0; i < 9; i++) {
             finalColor += vec4(textureSample[i] * edgeKernel[i], 0.0f);
         }
         finalColor.a = 1.0f;
     }
-    else if(confuse) {
-        finalColor = vec4(1.0 - texture(scene, uv).rgb, 1.0);
-    }
-    else if(shake) {
+
+    if (shake) {
         for(int i = 0; i < 9; i++) {
             finalColor += vec4(textureSample[i] * blurKernel[i], 0.0f);
         }
         finalColor.a = 1.0f;
     }
-    else {
+
+    if (confuse && !chaos && !shake) {
+        finalColor = vec4(1.0f - texture(scene, uv).rgb, 1.0);
+    }
+
+    // no effects
+    if (!confuse && !chaos && !shake) {
         finalColor =  texture(scene, uv);
     }
 }

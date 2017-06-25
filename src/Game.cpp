@@ -6,11 +6,13 @@
 #include "physics/Collision.h"
 #include "physics/Direction.h"
 #include "physics/CollisionDetector.h"
+#include "utils/Random.h"
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <tuple>
 #include <cmath>
 #include <iostream>
+#include <algorithm>
 
 const glm::vec2 INITIAL_BALL_VELOCITY(200.0f, -550.0f);
 float INITIAL_PLAYER_VELOCITY = 500.0f;
@@ -65,6 +67,7 @@ void Game::input(GLfloat delta) {
 }
 
 void Game::update(GLfloat delta) {
+    player_->boundaries(glm::vec2(0, window_->width() - player_->size().x));
     ball_->update(delta);
     particleEmitter_->update(delta, *ball_, 5, glm::vec2(ball_->radius() / 2));
     this->checkCollisions();
@@ -75,6 +78,15 @@ void Game::update(GLfloat delta) {
             postProcessor_->disableEffects(PostProcessingEffect::Shake);
         }
     }
+
+    for (auto& powerUp: powerUps_) {
+        powerUp->update(delta, *player_.get(), *ball_.get(), *postProcessor_.get());
+    }
+    powerUps_.erase(std::remove_if(powerUps_.begin(),
+            powerUps_.end(),
+            [](std::unique_ptr<PowerUp> const& powerUp) { return powerUp->isDestroyed() && !powerUp->isActivated(); }
+        ),
+        powerUps_.end());
 }
 
 void Game::render() {
@@ -90,8 +102,14 @@ void Game::render() {
         particleEmitter_->render();
         ball_->render(spriteRenderer_);
 
+        for (auto& powerUp: powerUps_) {
+            if (!powerUp->isDestroyed()) {
+                powerUp->render(spriteRenderer_);
+            }
+        }
+
         postProcessor_->endRender();
-        postProcessor_->render(glfwGetTime());
+        postProcessor_->render((GLfloat) glfwGetTime());
     }
 
     window_->swapBuffers();
@@ -168,6 +186,24 @@ void Game::initResources() {
     resourceManager_.createTexture("particle",
                                    "../resources/textures/particle.png",
                                    500, 500, 4, GL_RGBA);
+    resourceManager_.createTexture("speedUp",
+                                   "../resources/textures/powerups/powerup_speedup.png",
+                                   512, 128, 4, GL_RGBA);
+    resourceManager_.createTexture("sticky",
+                                   "../resources/textures/powerups/powerup_sticky.png",
+                                   512, 128, 4, GL_RGBA);
+    resourceManager_.createTexture("passThrough",
+                                   "../resources/textures/powerups/powerup_passthrough.png",
+                                   512, 128, 4, GL_RGBA);
+    resourceManager_.createTexture("padSizeIncrease",
+                                   "../resources/textures/powerups/powerup_increase.png",
+                                   512, 128, 4, GL_RGBA);
+    resourceManager_.createTexture("confuse",
+                                   "../resources/textures/powerups/powerup_confuse.png",
+                                   512, 128, 4, GL_RGBA);
+    resourceManager_.createTexture("chaos",
+                                   "../resources/textures/powerups/powerup_chaos.png",
+                                   512, 128, 4, GL_RGBA);
 
     particleEmitter_ = std::make_unique<ParticleEmitter>(resourceManager_.shaderProgram("particle"),
                                                          resourceManager_.texture("particle"),
@@ -218,10 +254,13 @@ void Game::checkCollisions() {
 
         if (!brick->isSolid()) {
             brick->isDestroyed(true);
+            this->spawnPowerUps(*brick);
         }
 
         shakeTime = 0.2f;
         postProcessor_->enableEffects(PostProcessingEffect::Shake);
+
+        if (ball_->isPassingThrough()) continue;
 
         // Collision resolution
         Direction direction = std::get<1>(collision);
@@ -261,5 +300,49 @@ void Game::checkCollisions() {
         ball_->velocityX(INITIAL_BALL_VELOCITY.x * percentage * strength);
         ball_->velocityY(-1 * std::abs(ball_->velocity().y));
         ball_->velocity(glm::normalize(ball_->velocity()) * glm::length(oldVelocity));
+
+        ball_->isStuck(ball_->isSticky());
+    }
+
+    // check collision between powerups and the paddle
+    for (auto& powerup : powerUps_) {
+        if (powerup->isDestroyed()) continue;
+
+        if (powerup->position().y >= window_->height()) {
+            powerup->isDestroyed(true);
+        }
+
+        if (CollisionDetector::checkCollision(*player_, *powerup.get())) {
+            powerup->activate(*player_.get(), *ball_.get(), *postProcessor_.get());
+        }
+    }
+}
+
+void Game::spawnPowerUps(const Brick& brick) {
+    if (Random::chance(50)) {   // 1 in 75 chance
+        powerUps_.push_back(std::make_unique<PowerUp>(brick.position(),
+            glm::vec3(0.5f, 0.5f, 1.0f), resourceManager_.texture("speedUp"), PowerUpType::SpeedUp, 0.0f));
+    }
+    if (Random::chance(50)) {
+        powerUps_.push_back(std::make_unique<PowerUp>(brick.position(),
+            glm::vec3(1.0f, 0.5f, 1.0f), resourceManager_.texture("sticky"), PowerUpType::Sticky, 20.0f));
+    }
+    if (Random::chance(50)) {
+        powerUps_.push_back(std::make_unique<PowerUp>(brick.position(),
+            glm::vec3(0.5f, 1.0f, 0.5f), resourceManager_.texture("passThrough"), PowerUpType::PassThrough, 10.0f));
+    }
+    if (Random::chance(50)) {
+        powerUps_.push_back(std::make_unique<PowerUp>(brick.position(),
+            glm::vec3(1.0f, 0.6f, 0.4), resourceManager_.texture("padSizeIncrease"), PowerUpType::PadSizeIncrease, 0.0f));
+    }
+
+    // Negative powerups should spawn more often
+    if (Random::chance(15)) {
+        powerUps_.push_back(std::make_unique<PowerUp>(brick.position(),
+            glm::vec3(1.0f, 0.3f, 0.3f), resourceManager_.texture("confuse"), PowerUpType::Confuse, 15.0f));
+    }
+    if (Random::chance(15)) {
+        powerUps_.push_back(std::make_unique<PowerUp>(brick.position(),
+            glm::vec3(0.9f, 0.25f, 0.25f), resourceManager_.texture("chaos"), PowerUpType::Chaos, 15.0f));
     }
 }

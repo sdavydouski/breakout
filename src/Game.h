@@ -8,6 +8,7 @@
 #include "WindowManager.h"
 #include "Window.h"
 #include "game/GameLevel.h"
+#include "game/PowerUp.h"
 #include "game/Player.h"
 #include "game/Ball.h"
 #include "graphics/ParticleEmitter.h"
@@ -30,6 +31,7 @@ private:
     Window* window_;
     std::vector<std::unique_ptr<GameLevel>> levels_;
     int currentLevel_;
+    std::vector<std::unique_ptr<PowerUp>> powerUps_;
 
     std::unique_ptr<Player> player_;
     std::unique_ptr<Ball> ball_;
@@ -47,4 +49,5 @@ private:
     void initResources();
 
     void checkCollisions();
+    void spawnPowerUps(const Brick& brick);
 };

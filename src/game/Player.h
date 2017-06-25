@@ -16,6 +16,10 @@ public:
     // getters
     float velocity() const { return velocity_; };
     const glm::vec2& boundaries() const { return boundaries_; };
+
+    // setters
+    void boundaries(const glm::vec2& boundaries) { boundaries_ = boundaries; }
+
 private:
     float velocity_;
     glm::vec2 boundaries_;
