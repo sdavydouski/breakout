@@ -25,6 +25,12 @@ add_library(glew STATIC externals/glew/src/glew.c)
 add_definitions(-DGLEW_STATIC)
 
 # end
+# OpenAL build configuration
+
+add_subdirectory(externals/openal-soft)
+include_directories(externals/openal-soft/include)
+
+# end
 # ------------------------
 # Header-only libraries
 
@@ -35,4 +41,4 @@ include_directories(externals/stb)
 
 add_executable(breakout ${SOURCES})
 
-target_link_libraries(breakout glfw glew ${OPENGL_LIBRARY})
+target_link_libraries(breakout glfw glew OpenAL ${OPENGL_LIBRARY})
