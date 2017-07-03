@@ -6,6 +6,7 @@
 #include "ResourceManager.h"
 #include "input/InputManager.h"
 #include "WindowManager.h"
+#include "audio/AudioManager.h"
 #include "Window.h"
 #include "game/GameLevel.h"
 #include "game/PowerUp.h"
@@ -39,6 +40,7 @@ private:
     WindowManager& windowManager_ = WindowManager::Instance();
     InputManager& inputManager_ = InputManager::Instance();
     ResourceManager& resourceManager_ = ResourceManager::Instance();
+    AudioManager& audioManager_ = AudioManager::Instance();
 
     SpriteRenderer& spriteRenderer_ = SpriteRenderer::Instance();
     std::unique_ptr<ParticleEmitter> particleEmitter_;

@@ -26,15 +26,18 @@ Game::Game(int width, int height, bool isFullScreen)
     windowManager_.startUp();
     inputManager_.startUp();
     resourceManager_.startUp();
+    audioManager_.startUp();
 
     this->initWindow(width, height, isFullScreen);
     this->initGL();
     this->initResources();
+    audioManager_.playSource("background");
 }
 
 Game::~Game() {
     std::cout << "Game destructor" << std::endl;
 
+    audioManager_.shutDown();
     resourceManager_.shutDown();
     inputManager_.shutDown();
     windowManager_.shutDown();
@@ -205,6 +208,12 @@ void Game::initResources() {
                                    "../../../resources/textures/powerups/powerup_chaos.png",
                                    512, 128, 4, GL_RGBA);
 
+    audioManager_.createSource("background", "../../../resources/audio/background.ogg", true);
+    audioManager_.createSource("bleep", "../../../resources/audio/bleep.ogg", false);
+    audioManager_.createSource("bleepPaddle", "../../../resources/audio/bleep_paddle.ogg", false);
+    audioManager_.createSource("solid", "../../../resources/audio/solid.ogg", false);
+    audioManager_.createSource("powerup", "../../../resources/audio/powerup.ogg", false);
+
     particleEmitter_ = std::make_unique<ParticleEmitter>(resourceManager_.shaderProgram("particle"),
                                                          resourceManager_.texture("particle"),
                                                          500);
@@ -252,13 +261,15 @@ void Game::checkCollisions() {
         Collision collision = CollisionDetector::checkCollision(*ball_, *brick.get());
         if (!std::get<0>(collision)) continue;      // if there is no collision...
 
-        if (!brick->isSolid()) {
+        if (brick->isSolid()) {
+            audioManager_.playSource("solid");
+            shakeTime = 0.2f;
+            postProcessor_->enableEffects(PostProcessingEffect::Shake);
+        } else {
+            audioManager_.playSource("bleep");
             brick->isDestroyed(true);
             this->spawnPowerUps(*brick);
         }
-
-        shakeTime = 0.2f;
-        postProcessor_->enableEffects(PostProcessingEffect::Shake);
 
         if (ball_->isPassingThrough()) continue;
 
@@ -289,6 +300,7 @@ void Game::checkCollisions() {
     // check collision with the paddle
     Collision collision = CollisionDetector::checkCollision(*ball_, *player_);
     if (std::get<0>(collision) && !ball_->isStuck()) {
+        audioManager_.playSource("bleepPaddle");
         // Check where it hit the board, and change velocity based on where it hit the board
         float centerBoard = player_->position().x + player_->size().x / 2;
         float distance = (ball_->position().x + ball_->radius()) - centerBoard;
@@ -313,6 +325,7 @@ void Game::checkCollisions() {
         }
 
         if (CollisionDetector::checkCollision(*player_, *powerup.get())) {
+            audioManager_.playSource("powerup");
             powerup->activate(*player_.get(), *ball_.get(), *postProcessor_.get());
         }
     }
