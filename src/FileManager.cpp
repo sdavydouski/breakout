@@ -2,6 +2,7 @@
 // STB_IMAGE_IMPLEMENTATION must be defined in *.c or *.cpp file (not in header)
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+#include <stb_vorbis.c>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -45,4 +46,16 @@ unsigned char* FileManager::readImage(const std::string& path,
     }
 
     return image;
+}
+
+AudioFile FileManager::readOggFile(const std::string& path) const {
+	AudioFile audioFile;
+	short* output;
+	audioFile.samples = stb_vorbis_decode_filename(path.c_str(),
+                                                   &audioFile.channels,
+                                                   &audioFile.sampleRate,
+                                                   &output);
+	audioFile.data = std::unique_ptr<short>(output);
+
+	return audioFile;
 }
