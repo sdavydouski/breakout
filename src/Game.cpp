@@ -9,6 +9,7 @@
 #include "utils/Random.h"
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include "GLFW/glfw3.h"
 #include <tuple>
 #include <cmath>
 #include <iostream>
@@ -111,6 +112,8 @@ void Game::render() {
             }
         }
 
+        textRenderer_.renderText("{} Chuck Norris. (!) 123-~,*", glm::vec2(50.0f, 50.f), glm::vec3(1.0f, 1.0f, 1.0f), 1.0f);
+
         postProcessor_->endRender();
         postProcessor_->render((GLfloat) glfwGetTime());
     }
@@ -155,6 +158,15 @@ void Game::initResources() {
     spriteShader->setUniform("sprite", 0);
 
     spriteRenderer_.init(spriteShader);
+
+    auto textRenderingShader = resourceManager_.createShaderProgram("text",
+                                                                    Shader(ShaderType::VERTEX,
+                                                                        "../../../resources/shaders/textrendering/shader.vert"),
+                                                                    Shader(ShaderType::FRAGMENT,
+                                                                        "../../../resources/shaders/textrendering/shader.frag"));
+    textRenderingShader->use();
+    textRenderingShader->setUniform("projection", projection);
+    textRenderer_.init("../../../resources/fonts/ocraext.ttf", textRenderingShader);
 
     auto particleShader = resourceManager_.createShaderProgram("particle",
                                                                Shader(ShaderType::VERTEX,
@@ -228,7 +240,7 @@ void Game::initResources() {
         "../../../resources/levels/3.txt", window_->width(), window_->height() / 2));
     levels_.push_back(std::make_unique<GameLevel>(
         "../../../resources/levels/4.txt", window_->width(), window_->height() / 2));
-    currentLevel_ = 0;
+    currentLevel_ = 2;
 
     glm::vec2 playerSize = glm::vec2(120, 20);
     glm::vec2 playerPosition = glm::vec2(

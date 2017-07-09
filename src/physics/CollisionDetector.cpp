@@ -1,4 +1,5 @@
 #include "CollisionDetector.h"
+#include <glm/glm.hpp>
 #include <numeric>
 
 // AABB - Circle collision
@@ -46,7 +47,7 @@ Direction CollisionDetector::getVectorDirection(const glm::vec2 &target) {
 
     float max = 0.0f;
     int bestMatch = -1;
-    for (GLuint i = 0; i < compass->length(); i++) {
+    for (int i = 0; i < compass->length(); i++) {
         float dotProduct = glm::dot(glm::normalize(target), compass[i]);
         if (dotProduct > max) {
             max = dotProduct;

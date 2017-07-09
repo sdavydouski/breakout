@@ -5,6 +5,7 @@
 #include "Particle.h"
 #include "../game/Ball.h"
 #include <GL/glew.h>
+#include <glm/vec2.hpp>
 #include <vector>
 
 class ParticleEmitter {

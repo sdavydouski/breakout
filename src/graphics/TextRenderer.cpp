@@ -1,0 +1,150 @@
+#include "TextRenderer.h"
+#include "../FileManager.h"
+#define STB_TRUETYPE_IMPLEMENTATION
+#include "stb_truetype.h"
+#include <iostream>
+
+TextRenderer::TextRenderer() {
+    std::cout << "TextRenderer constructor" << std::endl;
+}
+
+TextRenderer::~TextRenderer() {
+    std::cout << "TextRenderer destructor" << std::endl;
+    
+    glDeleteTextures(1, &font_.textureId);
+    glDeleteVertexArrays(1, &VAO_);
+    glDeleteBuffers(1, &VBO_);
+}
+
+void TextRenderer::init(const std::string& path, ShaderProgram* shaderProgram) {
+    shaderProgram_ = shaderProgram;
+    this->initFont(path);
+    this->initGlyphs();
+    this->initVAO();
+}
+
+void TextRenderer::renderText(const std::string& text, const glm::vec2& position, const glm::vec3& color, float scale) {
+    shaderProgram_->use();
+    shaderProgram_->setUniform("textColor", color);
+    
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, font_.textureId);
+    glBindVertexArray(VAO_);
+
+    GLfloat x = position.x;
+    
+    for (auto c : text) {
+        auto glyph = glyphs_[c];
+
+        // Update VBO for each character
+        GLfloat width = (glyph.positions[1].x - glyph.positions[0].x) * scale;
+        GLfloat height = (glyph.positions[1].y - glyph.positions[0].y) * scale;
+
+        GLfloat xPosition = x;
+        GLfloat yPosition = position.y;
+
+        GLfloat vertices[] = {
+            xPosition,         yPosition,          glyph.uvs[0].x, glyph.uvs[0].y,
+            xPosition + width, yPosition - height, glyph.uvs[1].x, glyph.uvs[1].y,
+            xPosition,         yPosition - height, glyph.uvs[0].x, glyph.uvs[1].y,
+
+            xPosition,         yPosition,          glyph.uvs[0].x, glyph.uvs[0].y,
+            xPosition + width, yPosition,          glyph.uvs[1].x, glyph.uvs[0].y,
+            xPosition + width, yPosition - height, glyph.uvs[1].x, glyph.uvs[1].y,
+        };
+
+        x += width;
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO_);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        // Render quad
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+    }
+
+    glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    shaderProgram_->end();
+}
+
+void TextRenderer::initFont(const std::string& path) {
+    auto fontData = FileManager::Instance().readAsBinary(path);
+    auto atlasData = std::vector<unsigned char>(font_.atlasWidth * font_.atlasHeight);
+    font_.charInfo = std::vector<stbtt_packedchar>(font_.charCount);
+
+    stbtt_pack_context context;
+    if (!stbtt_PackBegin(&context, &atlasData.front(), font_.atlasWidth, font_.atlasHeight, 0, 1, nullptr)) {
+        std::cerr << "Failed to initialize font" << std::endl;
+    }
+
+    stbtt_PackSetOversampling(&context, font_.overSampleX, font_.overSampleY);
+    if (!stbtt_PackFontRange(&context, &fontData.front(), 0,
+        font_.size, font_.firstChar, font_.charCount, &font_.charInfo.front())) {
+        std::cerr << "Failed to pack font" << std::endl;
+    }
+
+    stbtt_PackEnd(&context);
+
+    glGenTextures(1, &font_.textureId);
+    glBindTexture(GL_TEXTURE_2D, font_.textureId);
+    // Disable byte-alignment restriction
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, font_.atlasWidth, font_.atlasHeight, 0,
+        GL_RED, GL_UNSIGNED_BYTE, &atlasData.front());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+}
+
+void TextRenderer::initGlyphs() {
+    float offsetX = 0;
+    float offsetY = 0;
+
+    for (auto c = font_.firstChar; c < font_.charCount; c++) {
+        auto glyphInfo = this->getGlyphInfo(c, offsetX, offsetY);
+        offsetX = glyphInfo.offsetX;
+        offsetY = glyphInfo.offsetY;
+
+        glyphs_[c] = glyphInfo;
+    }
+
+    // add more width to space glyph
+    auto aGlyph = glyphs_['A'];
+    glyphs_[' '].positions[1].x += aGlyph.positions[1].x - aGlyph.positions[0].x;
+}
+
+GlyphInfo TextRenderer::getGlyphInfo(char character, float offsetX, float offsetY) {
+    stbtt_aligned_quad quad;
+
+    stbtt_GetPackedQuad(&font_.charInfo.front(), font_.atlasWidth, font_.atlasHeight, 
+                        character - font_.firstChar, &offsetX, &offsetY, &quad, 1);
+
+    auto info = GlyphInfo();
+    info.offsetX = offsetX;
+    info.offsetY = offsetY;
+    info.positions[0] = { quad.x0, quad.y0 };
+    info.positions[1] = { quad.x1, quad.y1 };
+    info.uvs[0] = { quad.s0, quad.t1 };
+    info.uvs[1] = { quad.s1, quad.t0 };
+
+    return info;
+}
+
+void TextRenderer::initVAO() {
+    glGenVertexArrays(1, &VAO_);
+    glGenBuffers(1, &VBO_);
+
+    glBindVertexArray(VAO_);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_);
+
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 4, nullptr, GL_DYNAMIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*) 0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+}

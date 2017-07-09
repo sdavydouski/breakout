@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 #include "game/GameState.h"
 #include "graphics/SpriteRenderer.h"
+#include "graphics/TextRenderer.h"
 #include "ResourceManager.h"
 #include "input/InputManager.h"
 #include "WindowManager.h"
@@ -43,6 +44,8 @@ private:
     AudioManager& audioManager_ = AudioManager::Instance();
 
     SpriteRenderer& spriteRenderer_ = SpriteRenderer::Instance();
+    TextRenderer& textRenderer_ = TextRenderer::Instance();
+
     std::unique_ptr<ParticleEmitter> particleEmitter_;
     std::unique_ptr<PostProcessor> postProcessor_;
 

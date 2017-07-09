@@ -33,6 +33,22 @@ std::string FileManager::readAsText(const std::string &path) const {
     return content;
 }
 
+std::vector<unsigned char> FileManager::readAsBinary(const std::string& path) const {
+    std::ifstream file(path, std::ios::binary | std::ios::ate);
+
+    if (!file.is_open()) {
+        std::cerr << "Unable to open font file " << path << std::endl;
+    }
+
+    auto size = file.tellg();
+    auto bytes = std::vector<unsigned char>(size);
+    file.seekg(0, std::ios::beg);
+    file.read(reinterpret_cast<char*>(&bytes.front()), size);
+    file.close();
+
+    return bytes;
+}
+
 unsigned char* FileManager::readImage(const std::string& path,
                                       GLint width,
                                       GLint height,
@@ -49,13 +65,13 @@ unsigned char* FileManager::readImage(const std::string& path,
 }
 
 AudioFile FileManager::readOggFile(const std::string& path) const {
-	AudioFile audioFile;
-	short* output;
-	audioFile.samples = stb_vorbis_decode_filename(path.c_str(),
+    AudioFile audioFile;
+    short* output;
+    audioFile.samples = stb_vorbis_decode_filename(path.c_str(),
                                                    &audioFile.channels,
                                                    &audioFile.sampleRate,
                                                    &output);
-	audioFile.data = std::unique_ptr<short>(output);
+    audioFile.data = std::unique_ptr<short>(output);
 
-	return audioFile;
+    return audioFile;
 }

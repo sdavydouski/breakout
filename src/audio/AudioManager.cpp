@@ -1,8 +1,7 @@
 #include "AudioManager.h"
-#include "../utils/AudioFile.h"
+#include "AudioFile.h"
 #include "../FileManager.h"
 #include <iostream>
-
 
 AudioManager::AudioManager() {
     std::cout << "AudioManager constructor" << std::endl;

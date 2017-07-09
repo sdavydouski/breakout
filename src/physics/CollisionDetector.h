@@ -1,5 +1,6 @@
 #pragma once
 
+#include <glm/vec2.hpp>
 #include "Collision.h"
 #include "Direction.h"
 #include "../game/GameObject.h"

@@ -1,7 +1,7 @@
 #version 330 core
 
-in  vec2  uv;
-out vec4  finalColor;
+in vec2 uv;
+out vec4 finalColor;
 
 uniform sampler2D scene;
 uniform vec2 offsets[9];
