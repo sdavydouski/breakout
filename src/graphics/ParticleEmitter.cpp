@@ -1,4 +1,6 @@
 #include "ParticleEmitter.h"
+#include <glm/mat4x4.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <cstdlib>
 #include <iostream>
 
@@ -62,10 +64,14 @@ void ParticleEmitter::update(float delta,
     }
 }
 
-void ParticleEmitter::render() {
+void ParticleEmitter::render(float scale) {
     // Use additive blending to give it a 'glow' effect
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    
     shaderProgram_->use();
+
+    shaderProgram_->setUniform("scale", scale);
+
     for (auto& particle: particles_) {
         if (particle.lifespan > 0.0f) {
             shaderProgram_->setUniform("offset", particle.position);
@@ -76,6 +82,8 @@ void ParticleEmitter::render() {
             glBindVertexArray(0);
         }
     }
+    
+    shaderProgram_->end();
     // Reset to default blending mode
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }

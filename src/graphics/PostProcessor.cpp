@@ -38,9 +38,10 @@ void PostProcessor::endRender() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void PostProcessor::render(GLfloat time) {
+void PostProcessor::render(GLfloat time, GLfloat scale) {
     shaderProgram_->use();
     shaderProgram_->setUniform("time", time);
+    shaderProgram_->setUniform("scale", scale);
     shaderProgram_->setUniform("chaos", effects_ & PostProcessingEffect::Chaos);
     shaderProgram_->setUniform("confuse", effects_ & PostProcessingEffect::Confuse);
     shaderProgram_->setUniform("shake", effects_ & PostProcessingEffect::Shake);

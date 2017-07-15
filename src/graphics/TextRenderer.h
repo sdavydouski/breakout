@@ -21,6 +21,7 @@ private:
     ShaderProgram* shaderProgram_;
     GLuint VAO_;
     GLuint VBO_;
+    GLuint textureId_;
 
     Font font_;
 

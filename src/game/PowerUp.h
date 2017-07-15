@@ -2,6 +2,7 @@
 
 #include <GL/glew.h>
 #include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
 #include "GameObject.h"
 #include "Ball.h"
 #include "Player.h"
@@ -11,14 +12,16 @@
 class PowerUp: public GameObject {
 public:
     PowerUp(const glm::vec2& position,
+            const glm::vec2& size,
             const glm::vec3& color,
             Texture* sprite,
+            const glm::vec2& velocity,
             PowerUpType type,
             GLfloat duration);
     ~PowerUp();
 
     void update(float delta, Player& player, Ball& ball, PostProcessor& postProcessor);
-    void activate(Player& player, Ball& ball, PostProcessor& postProcessor);
+    void activate(Player& player, Ball& ball, PostProcessor& postProcessor, const glm::vec2 scales);
 
     // getters
     PowerUpType type() const { return type_; }

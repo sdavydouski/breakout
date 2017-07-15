@@ -17,7 +17,7 @@ public:
                 const Ball& object,
                 int newParticles,
                 const glm::vec2 offset = glm::vec2(0.0f));
-    void render();
+    void render(float scale);
 private:
     std::vector<Particle> particles_;
     GLuint amount_;

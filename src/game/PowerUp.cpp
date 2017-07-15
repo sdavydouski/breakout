@@ -1,18 +1,15 @@
 #include "PowerUp.h"
 #include <iostream>
 
-// The size of a PowerUp block
-const glm::vec2 SIZE(60, 20);
-// Velocity a PowerUp block has when spawned
-const glm::vec2 VELOCITY(0.0f, 150.0f);
-
 PowerUp::PowerUp(const glm::vec2& position,
+                 const glm::vec2& size,
                  const glm::vec3& color,
                  Texture* sprite,
+                 const glm::vec2& velocity,
                  PowerUpType type,
                  GLfloat duration)
-    : GameObject(position, SIZE, color, sprite),
-      velocity_(VELOCITY), type_(type), duration_(duration), isActivated_(false), isDestroyed_(false) {
+    : GameObject(position, size, color, sprite),
+      velocity_(velocity), type_(type), duration_(duration), isActivated_(false), isDestroyed_(false) {
     std::cout << "PowerUp constructor" << std::endl;
 
 }
@@ -53,7 +50,7 @@ void PowerUp::update(float delta, Player& player, Ball& ball, PostProcessor& pos
     }
 }
 
-void PowerUp::activate(Player& player, Ball& ball, PostProcessor& postProcessor) {
+void PowerUp::activate(Player& player, Ball& ball, PostProcessor& postProcessor, const glm::vec2 scales) {
     isActivated_ = true;
     isDestroyed_ = true;
 
@@ -73,7 +70,7 @@ void PowerUp::activate(Player& player, Ball& ball, PostProcessor& postProcessor)
             break;
         }
         case PowerUpType::PadSizeIncrease: {
-            player.updateSizeX(50);
+            player.updateSizeX(50 * scales.x);
             break;
         }
         case PowerUpType::Confuse: {

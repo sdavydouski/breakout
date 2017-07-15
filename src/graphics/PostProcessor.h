@@ -15,7 +15,7 @@ public:
     // Should be called after rendering the game, so it stores all the rendered data into a texture object
     void endRender();
     // Renders the PostProcessor texture quad (as a screen-encompassing large sprite)
-    void render(GLfloat delta);
+    void render(GLfloat delta, GLfloat scale);
 
     void enableEffects(int effects);
     void disableEffects(int effects);

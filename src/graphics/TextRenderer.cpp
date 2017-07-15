@@ -11,7 +11,7 @@ TextRenderer::TextRenderer() {
 TextRenderer::~TextRenderer() {
     std::cout << "TextRenderer destructor" << std::endl;
     
-    glDeleteTextures(1, &font_.textureId);
+    glDeleteTextures(1, &textureId_);
     glDeleteVertexArrays(1, &VAO_);
     glDeleteBuffers(1, &VBO_);
 }
@@ -28,7 +28,7 @@ void TextRenderer::renderText(const std::string& text, const glm::vec2& position
     shaderProgram_->setUniform("textColor", color);
     
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, font_.textureId);
+    glBindTexture(GL_TEXTURE_2D, textureId_);
     glBindVertexArray(VAO_);
 
     GLfloat x = position.x;
@@ -37,12 +37,12 @@ void TextRenderer::renderText(const std::string& text, const glm::vec2& position
         auto glyph = glyphs_[c];
 
         // Update VBO for each character
-        GLfloat width = (glyph.positions[1].x - glyph.positions[0].x) * scale;
-        GLfloat height = (glyph.positions[1].y - glyph.positions[0].y) * scale;
+        GLfloat width = glyph.size.x * scale;
+        GLfloat height = glyph.size.y * scale;
 
         GLfloat xPosition = x;
         GLfloat yPosition = position.y;
-
+        
         GLfloat vertices[] = {
             xPosition,         yPosition,          glyph.uvs[0].x, glyph.uvs[0].y,
             xPosition + width, yPosition - height, glyph.uvs[1].x, glyph.uvs[1].y,
@@ -87,8 +87,15 @@ void TextRenderer::initFont(const std::string& path) {
 
     stbtt_PackEnd(&context);
 
-    glGenTextures(1, &font_.textureId);
-    glBindTexture(GL_TEXTURE_2D, font_.textureId);
+    stbtt_fontinfo fontInfo;
+    stbtt_InitFont(&fontInfo, &fontData.front(), 0);
+    
+    int ascent, descent, lineGap;
+    stbtt_GetFontVMetrics(&fontInfo, &ascent, &descent, &lineGap);
+
+
+    glGenTextures(1, &textureId_);
+    glBindTexture(GL_TEXTURE_2D, textureId_);
     // Disable byte-alignment restriction
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, font_.atlasWidth, font_.atlasHeight, 0,
@@ -113,7 +120,7 @@ void TextRenderer::initGlyphs() {
 
     // add more width to space glyph
     auto aGlyph = glyphs_['A'];
-    glyphs_[' '].positions[1].x += aGlyph.positions[1].x - aGlyph.positions[0].x;
+    glyphs_[' '].size.x += aGlyph.size.x;
 }
 
 GlyphInfo TextRenderer::getGlyphInfo(char character, float offsetX, float offsetY) {
@@ -125,8 +132,7 @@ GlyphInfo TextRenderer::getGlyphInfo(char character, float offsetX, float offset
     auto info = GlyphInfo();
     info.offsetX = offsetX;
     info.offsetY = offsetY;
-    info.positions[0] = { quad.x0, quad.y0 };
-    info.positions[1] = { quad.x1, quad.y1 };
+    info.size = glm::vec2(quad.x1 - quad.x0, quad.y1 - quad.y0);
     info.uvs[0] = { quad.s0, quad.t1 };
     info.uvs[1] = { quad.s1, quad.t0 };
 

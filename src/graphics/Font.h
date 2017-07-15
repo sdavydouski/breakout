@@ -13,5 +13,4 @@ using Font = struct {
     const char firstChar = 0;
     const int charCount = 127;
     std::vector<stbtt_packedchar> charInfo;
-    GLuint textureId;
 };

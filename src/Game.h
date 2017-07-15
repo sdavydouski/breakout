@@ -1,6 +1,5 @@
 #pragma once
 
-#include <GL/glew.h>
 #include "game/GameState.h"
 #include "graphics/SpriteRenderer.h"
 #include "graphics/TextRenderer.h"
@@ -15,6 +14,7 @@
 #include "game/Ball.h"
 #include "graphics/ParticleEmitter.h"
 #include "graphics/PostProcessor.h"
+#include <GL/glew.h>
 #include <memory>
 #include <vector>
 
@@ -30,7 +30,9 @@ public:
     bool isExiting();
 private:
     GameState gameState_;
+    GLuint lives_;
     Window* window_;
+    glm::vec2 scales_;
     std::vector<std::unique_ptr<GameLevel>> levels_;
     int currentLevel_;
     std::vector<std::unique_ptr<PowerUp>> powerUps_;
