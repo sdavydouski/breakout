@@ -1,6 +1,6 @@
 #include "Shader.h"
 #include "ShaderType.h"
-#include "../FileManager.h"
+#include "../utils/FileManager.h"
 #include <GL/glew.h>
 #include <iostream>
 #include <string>
@@ -10,7 +10,7 @@
 Shader::Shader(ShaderType type, const std::string& path) {
     std::cout << "Shader constructor" << std::endl;
 
-    std::string source = FileManager::Instance().readAsText(path);
+    std::string source = FileManager::readAsText(path);
 
     id_ = glCreateShader(type);
 

@@ -1,5 +1,5 @@
 #include "GameLevel.h"
-#include "../FileManager.h"
+#include "../utils/FileManager.h"
 #include "../ResourceManager.h"
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
@@ -33,7 +33,7 @@ std::vector<std::vector<int>> GameLevel::loadTiles(const std::string &path) {
     std::vector<std::vector<int>> tiles;
 
     int tile;
-    std::stringstream level(FileManager::Instance().readAsText(path));
+    std::stringstream level(FileManager::readAsText(path));
     std::string line;
     while (std::getline(level, line)) {
         std::istringstream rowStream(line);

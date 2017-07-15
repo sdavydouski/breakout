@@ -155,9 +155,9 @@ void Game::initGL() {
 void Game::initResources() {
     auto spriteShader = resourceManager_.createShaderProgram("sprite",
                                                              Shader(ShaderType::VERTEX,
-                                                                     "../../../resources/shaders/sprite/shader.vert"),
+                                                                     "../resources/shaders/sprite/shader.vert"),
                                                              Shader(ShaderType::FRAGMENT,
-                                                                     "../../../resources/shaders/sprite/shader.frag"));
+                                                                     "../resources/shaders/sprite/shader.frag"));
     glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(window_->width()),
                                       static_cast<GLfloat>(window_->height()), 0.0f,
                                       -1.0f, 1.0f);
@@ -169,70 +169,70 @@ void Game::initResources() {
 
     auto textRenderingShader = resourceManager_.createShaderProgram("text",
                                                                     Shader(ShaderType::VERTEX,
-                                                                        "../../../resources/shaders/textrendering/shader.vert"),
+                                                                        "../resources/shaders/textrendering/shader.vert"),
                                                                     Shader(ShaderType::FRAGMENT,
-                                                                        "../../../resources/shaders/textrendering/shader.frag"));
+                                                                        "../resources/shaders/textrendering/shader.frag"));
     textRenderingShader->use();
     textRenderingShader->setUniform("projection", projection);
-    textRenderer_.init("../../../resources/fonts/ocraext.ttf", textRenderingShader);
+    textRenderer_.init("../resources/fonts/ocraext.ttf", textRenderingShader);
 
     auto particleShader = resourceManager_.createShaderProgram("particle",
                                                                Shader(ShaderType::VERTEX,
-                                                                      "../../../resources/shaders/particle/shader.vert"),
+                                                                      "../resources/shaders/particle/shader.vert"),
                                                                Shader(ShaderType::FRAGMENT,
-                                                                      "../../../resources/shaders/particle/shader.frag"));
+                                                                      "../resources/shaders/particle/shader.frag"));
     particleShader->use();
     particleShader->setUniform("projection", projection);
     particleShader->setUniform("sprite", 0);
 
     resourceManager_.createShaderProgram("postprocessing",
                                          Shader(ShaderType::VERTEX,
-                                                "../../../resources/shaders/postprocessing/shader.vert"),
+                                                "../resources/shaders/postprocessing/shader.vert"),
                                          Shader(ShaderType::FRAGMENT,
-                                                "../../../resources/shaders/postprocessing/shader.frag"));
+                                                "../resources/shaders/postprocessing/shader.frag"));
 
     resourceManager_.createTexture("background",
-                                   "../../../resources/textures/background.jpg",
+                                   "../resources/textures/background.jpg",
                                    1600, 900);
     resourceManager_.createTexture("face",
-                                   "../../../resources/textures/awesome_face.png",
+                                   "../resources/textures/awesome_face.png",
                                    512, 512, 4, GL_RGBA);
     resourceManager_.createTexture("block",
-                                   "../../../resources/textures/block.png",
+                                   "../resources/textures/block.png",
                                    128, 128);
     resourceManager_.createTexture("block_solid",
-                                   "../../../resources/textures/block_solid.png",
+                                   "../resources/textures/block_solid.png",
                                    128, 128);
     resourceManager_.createTexture("paddle",
-                                   "../../../resources/textures/paddle.png",
+                                   "../resources/textures/paddle.png",
                                    512, 128, 4, GL_RGBA);
     resourceManager_.createTexture("particle",
-                                   "../../../resources/textures/particle.png",
+                                   "../resources/textures/particle.png",
                                    500, 500, 4, GL_RGBA);
     resourceManager_.createTexture("speedUp",
-                                   "../../../resources/textures/powerups/powerup_speedup.png",
+                                   "../resources/textures/powerups/powerup_speedup.png",
                                    512, 128, 4, GL_RGBA);
     resourceManager_.createTexture("sticky",
-                                   "../../../resources/textures/powerups/powerup_sticky.png",
+                                   "../resources/textures/powerups/powerup_sticky.png",
                                    512, 128, 4, GL_RGBA);
     resourceManager_.createTexture("passThrough",
-                                   "../../../resources/textures/powerups/powerup_passthrough.png",
+                                   "../resources/textures/powerups/powerup_passthrough.png",
                                    512, 128, 4, GL_RGBA);
     resourceManager_.createTexture("padSizeIncrease",
-                                   "../../../resources/textures/powerups/powerup_increase.png",
+                                   "../resources/textures/powerups/powerup_increase.png",
                                    512, 128, 4, GL_RGBA);
     resourceManager_.createTexture("confuse",
-                                   "../../../resources/textures/powerups/powerup_confuse.png",
+                                   "../resources/textures/powerups/powerup_confuse.png",
                                    512, 128, 4, GL_RGBA);
     resourceManager_.createTexture("chaos",
-                                   "../../../resources/textures/powerups/powerup_chaos.png",
+                                   "../resources/textures/powerups/powerup_chaos.png",
                                    512, 128, 4, GL_RGBA);
 
-    audioManager_.createSource("background", "../../../resources/audio/background.ogg", true);
-    audioManager_.createSource("bleep", "../../../resources/audio/bleep.ogg", false);
-    audioManager_.createSource("bleepPaddle", "../../../resources/audio/bleep_paddle.ogg", false);
-    audioManager_.createSource("solid", "../../../resources/audio/solid.ogg", false);
-    audioManager_.createSource("powerup", "../../../resources/audio/powerup.ogg", false);
+    audioManager_.createSource("background", "../resources/audio/background.ogg", true);
+    audioManager_.createSource("bleep", "../resources/audio/bleep.ogg", false);
+    audioManager_.createSource("bleepPaddle", "../resources/audio/bleep_paddle.ogg", false);
+    audioManager_.createSource("solid", "../resources/audio/solid.ogg", false);
+    audioManager_.createSource("powerup", "../resources/audio/powerup.ogg", false);
 
     particleEmitter_ = std::make_unique<ParticleEmitter>(resourceManager_.shaderProgram("particle"),
                                                          resourceManager_.texture("particle"),
@@ -241,13 +241,13 @@ void Game::initResources() {
                                                      window_->width(), window_->height());
 
     levels_.push_back(std::make_unique<GameLevel>(
-        "../../../resources/levels/1.txt", window_->width(), window_->height() / 2));
+        "../resources/levels/1.txt", window_->width(), window_->height() / 2));
     levels_.push_back(std::make_unique<GameLevel>(
-        "../../../resources/levels/2.txt", window_->width(), window_->height() / 2));
+        "../resources/levels/2.txt", window_->width(), window_->height() / 2));
     levels_.push_back(std::make_unique<GameLevel>(
-        "../../../resources/levels/3.txt", window_->width(), window_->height() / 2));
+        "../resources/levels/3.txt", window_->width(), window_->height() / 2));
     levels_.push_back(std::make_unique<GameLevel>(
-        "../../../resources/levels/4.txt", window_->width(), window_->height() / 2));
+        "../resources/levels/4.txt", window_->width(), window_->height() / 2));
     currentLevel_ = 3;
 
     glm::vec2 playerSize = glm::vec2(150, 20) * scales_;

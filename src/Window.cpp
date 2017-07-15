@@ -14,7 +14,9 @@ Window::Window(int width, int height, const std::string& title, bool isFullScree
 
     if (window_ == nullptr) {
         std::cerr << "Failed to create GLFW window" << std::endl;
-    }
+     }
+
+    glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
     if (!isFullScreen) {
         // Center window on screen

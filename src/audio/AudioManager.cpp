@@ -1,6 +1,6 @@
 #include "AudioManager.h"
 #include "AudioFile.h"
-#include "../FileManager.h"
+#include "../utils/FileManager.h"
 #include <iostream>
 
 AudioManager::AudioManager() {
@@ -32,7 +32,7 @@ void AudioManager::shutDown() {
 }
 
 void AudioManager::createSource(const std::string& name, const std::string& path, bool isLooping) {
-    AudioFile audioFile = FileManager::Instance().readOggFile(path);
+    AudioFile audioFile = FileManager::readOggFile(path);
     ALuint source, buffer;
 
     alGenSources(1, &source);

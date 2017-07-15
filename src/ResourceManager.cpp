@@ -2,7 +2,7 @@
 #include "graphics/ShaderProgram.h"
 #include "graphics/Shader.h"
 #include "graphics/Texture.h"
-#include "FileManager.h"
+#include "utils/FileManager.h"
 #include <memory>
 #include <string>
 #include <iostream>
@@ -44,7 +44,7 @@ Texture* ResourceManager::createTexture(const std::string& name,
                                         GLuint height,
                                         GLint channels,
                                         GLuint format) {
-    unsigned char *image = FileManager::Instance().readImage(path, width, height, channels);
+    unsigned char *image = FileManager::readImage(path, width, height, channels);
 
     textures_[name] = std::unique_ptr<Texture>(
         new Texture(width, height, image, format)

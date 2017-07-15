@@ -1,5 +1,5 @@
 #include "TextRenderer.h"
-#include "../FileManager.h"
+#include "../utils/FileManager.h"
 #define STB_TRUETYPE_IMPLEMENTATION
 #include "stb_truetype.h"
 #include <iostream>
@@ -70,7 +70,7 @@ void TextRenderer::renderText(const std::string& text, const glm::vec2& position
 }
 
 void TextRenderer::initFont(const std::string& path) {
-    auto fontData = FileManager::Instance().readAsBinary(path);
+    auto fontData = FileManager::readAsBinary(path);
     auto atlasData = std::vector<unsigned char>(font_.atlasWidth * font_.atlasHeight);
     font_.charInfo = std::vector<stbtt_packedchar>(font_.charCount);
 
