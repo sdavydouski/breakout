@@ -12,6 +12,7 @@ public:
     ~GameLevel();
 
     void render(SpriteRenderer& renderer);
+    void reset();
     bool isCompleted();
 
     // getters

@@ -18,15 +18,25 @@ GameLevel::~GameLevel() {
 }
 
 void GameLevel::render(SpriteRenderer& renderer) {
-    for (auto& brick : bricks_) {
+    for (auto& brick: bricks_) {
         if (!brick->isDestroyed()) {
             brick->render(renderer);
         }
     }
 }
 
+void GameLevel::reset() {
+    for (auto& brick: bricks_) {
+        brick->isDestroyed(false);
+    }
+}
+
 bool GameLevel::isCompleted() {
-    return false;
+    for (auto& brick: bricks_) {
+        if (!brick->isSolid() && !brick->isDestroyed()) return false;
+    }
+
+    return true;
 }
 
 std::vector<std::vector<int>> GameLevel::loadTiles(const std::string &path) {

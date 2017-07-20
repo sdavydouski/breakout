@@ -1,7 +1,5 @@
 #include "Game.h"
 #include "graphics/ShaderProgram.h"
-#include "graphics/Shader.h"
-#include "graphics/ShaderType.h"
 #include "Window.h"
 #include "physics/Collision.h"
 #include "physics/Direction.h"
@@ -11,7 +9,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "GLFW/glfw3.h"
 #include "AssetsLoader.h"
-#include "utils/globals.h"
 #include <tuple>
 #include <iostream>
 #include <algorithm>
@@ -19,14 +16,17 @@
 const int GAME_WIDTH = 960;
 const int GAME_HEIGHT = 540;
 
+const int LIVES = 3;
 const glm::vec2 INITIAL_BALL_VELOCITY(200.0f, -550.0f);
-float INITIAL_PLAYER_VELOCITY = 600.0f;
+const float INITIAL_PLAYER_VELOCITY = 600.0f;
+const glm::vec2 PLAYER_SIZE = glm::vec2(150, 20);
+const float BALL_RADIUS = 10.0f;
 
 GLfloat shakeTime = 0.0f;
 
 Game::Game(int width, int height, bool isFullScreen)
-    : gameState_(GameState::GAME_ACTIVE), lives_(3), scales_(static_cast<float>(width) / GAME_WIDTH, 
-                                                             static_cast<float>(height) / GAME_HEIGHT) {
+    : gameState_(GameState::GAME_MENU), lives_(LIVES), scales_(static_cast<float>(width) / GAME_WIDTH,
+                                                               static_cast<float>(height) / GAME_HEIGHT) {
     std::cout << "Game constructor" << std::endl;
 
     windowManager_.startUp();
@@ -51,27 +51,44 @@ Game::~Game() {
 
 void Game::input(GLfloat delta) {
     inputManager_.pollEvents(delta);
-    float velocity = player_->velocity() * delta;
 
-    if (inputManager_.isKeyPressed(GLFW_KEY_A) || inputManager_.isKeyPressed(GLFW_KEY_LEFT)) {
-        if (player_->position().x >= player_->boundaries().x) {
-            player_->updatePositionX(-velocity);
-            if (ball_->isStuck()) {
-                ball_->updatePositionX(-velocity);
+    if (gameState_ == GameState::GAME_MENU) {
+        if (inputManager_.isKeyPressed(GLFW_KEY_ENTER) && !inputManager_.isKeyProcessed(GLFW_KEY_ENTER)) {
+            gameState_ = GameState::GAME_ACTIVE;
+        } else if (inputManager_.isKeyPressed(GLFW_KEY_W) && !inputManager_.isKeyProcessed(GLFW_KEY_W)) {
+            inputManager_.setProcessedKey(GLFW_KEY_W);
+            currentLevel_ = (currentLevel_ + 1) % levels_.size();
+        } else if (inputManager_.isKeyPressed(GLFW_KEY_S) && !inputManager_.isKeyProcessed(GLFW_KEY_S)) {
+            inputManager_.setProcessedKey(GLFW_KEY_S);
+            if (currentLevel_ > 0) {
+                currentLevel_--;
+            } else {
+                currentLevel_ = levels_.size() - 1;
             }
         }
-    }
-    if (inputManager_.isKeyPressed(GLFW_KEY_D) || inputManager_.isKeyPressed(GLFW_KEY_RIGHT)) {
-        if (player_->position().x <= player_->boundaries().y) {
-			player_->updatePositionX(velocity);
-            if (ball_->isStuck()) {
-				ball_->updatePositionX(velocity);
+    } else if (gameState_ == GameState::GAME_ACTIVE) {
+        float velocity = player_->velocity() * delta;
+
+        if (inputManager_.isKeyPressed(GLFW_KEY_A) || inputManager_.isKeyPressed(GLFW_KEY_LEFT)) {
+            if (player_->position().x >= player_->boundaries().x) {
+                player_->updatePositionX(-velocity);
+                if (ball_->isStuck()) {
+                    ball_->updatePositionX(-velocity);
+                }
             }
         }
-    }
+        if (inputManager_.isKeyPressed(GLFW_KEY_D) || inputManager_.isKeyPressed(GLFW_KEY_RIGHT)) {
+            if (player_->position().x <= player_->boundaries().y) {
+                player_->updatePositionX(velocity);
+                if (ball_->isStuck()) {
+                    ball_->updatePositionX(velocity);
+                }
+            }
+        }
 
-    if (inputManager_.isKeyPressed(GLFW_KEY_SPACE)) {
-        ball_->isStuck(false);
+        if (inputManager_.isKeyPressed(GLFW_KEY_SPACE)) {
+            ball_->isStuck(false);
+        }
     }
 }
 
@@ -83,7 +100,10 @@ void Game::update(GLfloat delta) {
 
     if (ball_->position().y >= window_->height() - ball_->size().y) {
         lives_--;
-        // reset the game when lives is 0
+        if (lives_ < 0) {
+            this->reset();
+            gameState_ = GameState::GAME_MENU;
+        }
     }
 
     if (shakeTime > 0.0f) {
@@ -104,34 +124,69 @@ void Game::update(GLfloat delta) {
 }
 
 void Game::render() {
-    if (gameState_ == GameState::GAME_ACTIVE) {
+    if (gameState_ == GameState::GAME_MENU || gameState_ == GameState::GAME_ACTIVE) {
         postProcessor_->beginRender();
 
         spriteRenderer_.renderSprite(resourceManager_.texture("background"),
-                                     glm::vec2(0.0f, 0.0f),
-                                     glm::vec2(window_->width(), window_->height()));
+            glm::vec2(0.0f, 0.0f),
+            glm::vec2(window_->width(), window_->height()));
 
         levels_[currentLevel_]->render(spriteRenderer_);
         player_->render(spriteRenderer_);
         particleEmitter_->render(ball_->radius());
         ball_->render(spriteRenderer_);
 
-        for (auto& powerUp: powerUps_) {
+        for (auto& powerUp : powerUps_) {
             if (!powerUp->isDestroyed()) {
                 powerUp->render(spriteRenderer_);
             }
         }
 
-        textRenderer_.renderText("Lives: " + std::to_string(lives_), glm::vec2(10.0f, 30.f) * scales_, glm::vec3(1.0f, 1.0f, 1.0f), 0.6f * glm::length(scales_));
+        textRenderer_.renderText("Lives: " + std::to_string(lives_), glm::vec2(10.0f, 30.f) * scales_, glm::vec3(1.0f), 0.6f * glm::length(scales_));
 
         postProcessor_->endRender();
-        postProcessor_->render((GLfloat) glfwGetTime(), glm::length(scales_));
+        postProcessor_->render((GLfloat)glfwGetTime(), glm::length(scales_));
+    }
+
+    if (gameState_ == GameState::GAME_MENU) {
+        textRenderer_.renderText("Press ENTER to start", glm::vec2(GAME_WIDTH / 2 - 165, GAME_HEIGHT / 2) * scales_, glm::vec3(1.0f), 0.6f * glm::length(scales_));
+        textRenderer_.renderText("Press W or S to select level", glm::vec2(GAME_WIDTH / 2 - 155, GAME_HEIGHT / 2 + 20) * scales_, glm::vec3(1.0f), 0.4f * glm::length(scales_));
     }
 
     window_->swapBuffers();
 }
 
-bool Game::isExiting() {
+void Game::reset() {
+    levels_[currentLevel_]->reset();
+    
+    auto playerSize = PLAYER_SIZE * scales_;
+    auto playerPosition = glm::vec2(
+        window_->width() / 2 - playerSize.x / 2,
+        window_->height() - playerSize.y
+    );
+    player_->size(playerSize);
+    player_->position(playerPosition);
+    player_->color(glm::vec3(1.0f));
+    
+    auto ballRadius = BALL_RADIUS * glm::length(scales_);
+    ball_->position(playerPosition + glm::vec2(playerSize.x / 2 - ballRadius, -2 * ballRadius));
+    ball_->color(glm::vec3(1.0f));
+    ball_->velocity(INITIAL_BALL_VELOCITY * scales_);
+    ball_->isStuck(true);
+    ball_->isSticky(false);
+    ball_->isPassingThrough(false);
+    
+    postProcessor_->disableEffects(PostProcessingEffect::Chaos | 
+                                   PostProcessingEffect::Confuse | 
+                                   PostProcessingEffect::Shake);
+
+    powerUps_.clear();
+
+    lives_ = LIVES;
+}
+
+
+bool Game::isExiting() const {
     return window_->isClosing();
 }
 
@@ -170,7 +225,7 @@ void Game::initResources() {
     auto textRenderingShader = resourceManager_.shaderProgram("text");
     textRenderingShader->use();
     textRenderingShader->setUniform("projection", projection);
-    textRenderer_.init(ASSETS_OFFSET + "resources/fonts/ocraext.ttf", textRenderingShader);
+    textRenderer_.init(AssetsLoader::OFFSET + "resources/fonts/ocraext.ttf", textRenderingShader);
 
     auto particleShader = resourceManager_.shaderProgram("particle");
     particleShader->use();
@@ -187,16 +242,16 @@ void Game::initResources() {
                                                      window_->width(), window_->height());
 
     levels_.push_back(std::make_unique<GameLevel>(
-        ASSETS_OFFSET + "resources/levels/1.txt", window_->width(), window_->height() / 2));
+        AssetsLoader::OFFSET + "resources/levels/1.txt", window_->width(), window_->height() / 2));
     levels_.push_back(std::make_unique<GameLevel>(
-        ASSETS_OFFSET + "resources/levels/2.txt", window_->width(), window_->height() / 2));
+        AssetsLoader::OFFSET + "resources/levels/2.txt", window_->width(), window_->height() / 2));
     levels_.push_back(std::make_unique<GameLevel>(
-        ASSETS_OFFSET + "resources/levels/3.txt", window_->width(), window_->height() / 2));
+        AssetsLoader::OFFSET + "resources/levels/3.txt", window_->width(), window_->height() / 2));
     levels_.push_back(std::make_unique<GameLevel>(
-        ASSETS_OFFSET + "resources/levels/4.txt", window_->width(), window_->height() / 2));
-    currentLevel_ = 3;
+        AssetsLoader::OFFSET + "resources/levels/4.txt", window_->width(), window_->height() / 2));
+    currentLevel_ = 0;
 
-    glm::vec2 playerSize = glm::vec2(150, 20) * scales_;
+    glm::vec2 playerSize = PLAYER_SIZE * scales_;
     glm::vec2 playerPosition = glm::vec2(
         window_->width() / 2 - playerSize.x / 2,
         window_->height() - playerSize.y
@@ -209,13 +264,13 @@ void Game::initResources() {
                                        INITIAL_PLAYER_VELOCITY * scales_.x,
                                        glm::vec2(0, window_->width() - playerSize.x));
 
-    float ballRadius = 10.0f * glm::length(scales_);
+    auto ballRadius = BALL_RADIUS * glm::length(scales_);
 
     ball_ = std::make_unique<Ball>(playerPosition + glm::vec2(playerSize.x / 2 - ballRadius, -2 * ballRadius),
                                    ballRadius,
                                    glm::vec3(1.0f),
                                    resourceManager_.texture("face"),
-                                   glm::vec2(INITIAL_BALL_VELOCITY * scales_),
+                                   INITIAL_BALL_VELOCITY * scales_,
                                    glm::vec4(0.0f, window_->width(), 0.0f, window_->height()));
 }
 

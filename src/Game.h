@@ -27,14 +27,16 @@ public:
     void update(GLfloat delta);
     void render();
 
-    bool isExiting();
+    void reset();
+
+    bool isExiting() const;
 private:
     GameState gameState_;
-    GLuint lives_;
+    GLint lives_;
     Window* window_;
     glm::vec2 scales_;
     std::vector<std::unique_ptr<GameLevel>> levels_;
-    int currentLevel_;
+    GLint currentLevel_;
     std::vector<std::unique_ptr<PowerUp>> powerUps_;
 
     std::unique_ptr<Player> player_;

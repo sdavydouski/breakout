@@ -2,6 +2,7 @@
 
 #include "GameObject.h"
 #include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
 class Ball: public GameObject {
