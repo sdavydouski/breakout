@@ -3,23 +3,23 @@
 #include <GLFW/glfw3.h>
 #include "Game.h"
 
-const int width = 800;
-const int height = 600;
-bool isFullScreen = false;
+//const int width = 800;
+//const int height = 600;
+//bool isFullScreen = false;
 
-//const int width = 1920;
-//const int height = 1080;
-//bool isFullScreen = true;
+const int width = 1920;
+const int height = 1080;
+bool isFullScreen = true;
 
 int main(int argc, char* argv[]) {
     Game breakout(width, height, isFullScreen);
 
     GLfloat delta;
-    GLfloat lastFrame = (GLfloat) glfwGetTime();
+    auto lastFrame = static_cast<GLfloat>(glfwGetTime());
 
     while (!breakout.isExiting()) {
         // Calculate delta time
-        GLfloat currentFrame = (GLfloat) glfwGetTime();
+        auto currentFrame = static_cast<GLfloat>(glfwGetTime());
         delta = currentFrame - lastFrame;
         lastFrame = currentFrame;
 

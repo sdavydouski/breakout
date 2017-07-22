@@ -16,7 +16,8 @@
 const int GAME_WIDTH = 960;
 const int GAME_HEIGHT = 540;
 
-const int LIVES = 3;
+const int LIVES = 5;
+
 const glm::vec2 INITIAL_BALL_VELOCITY(200.0f, -550.0f);
 const float INITIAL_PLAYER_VELOCITY = 600.0f;
 const glm::vec2 PLAYER_SIZE = glm::vec2(150, 20);
@@ -52,22 +53,29 @@ Game::~Game() {
 void Game::input(GLfloat delta) {
     inputManager_.pollEvents(delta);
 
-    if (gameState_ == GameState::GAME_MENU) {
+    switch(gameState_) {
+    case GameState::GAME_MENU: {
         if (inputManager_.isKeyPressed(GLFW_KEY_ENTER) && !inputManager_.isKeyProcessed(GLFW_KEY_ENTER)) {
+            inputManager_.setProcessedKey(GLFW_KEY_ENTER);
             gameState_ = GameState::GAME_ACTIVE;
-        } else if (inputManager_.isKeyPressed(GLFW_KEY_W) && !inputManager_.isKeyProcessed(GLFW_KEY_W)) {
+        }
+        else if (inputManager_.isKeyPressed(GLFW_KEY_W) && !inputManager_.isKeyProcessed(GLFW_KEY_W)) {
             inputManager_.setProcessedKey(GLFW_KEY_W);
             currentLevel_ = (currentLevel_ + 1) % levels_.size();
-        } else if (inputManager_.isKeyPressed(GLFW_KEY_S) && !inputManager_.isKeyProcessed(GLFW_KEY_S)) {
+        }
+        else if (inputManager_.isKeyPressed(GLFW_KEY_S) && !inputManager_.isKeyProcessed(GLFW_KEY_S)) {
             inputManager_.setProcessedKey(GLFW_KEY_S);
             if (currentLevel_ > 0) {
                 currentLevel_--;
-            } else {
+            }
+            else {
                 currentLevel_ = levels_.size() - 1;
             }
         }
-    } else if (gameState_ == GameState::GAME_ACTIVE) {
-        float velocity = player_->velocity() * delta;
+        break;
+    }
+    case GameState::GAME_ACTIVE: {
+        auto velocity = player_->velocity() * delta;
 
         if (inputManager_.isKeyPressed(GLFW_KEY_A) || inputManager_.isKeyPressed(GLFW_KEY_LEFT)) {
             if (player_->position().x >= player_->boundaries().x) {
@@ -89,7 +97,16 @@ void Game::input(GLfloat delta) {
         if (inputManager_.isKeyPressed(GLFW_KEY_SPACE)) {
             ball_->isStuck(false);
         }
+        break;
     }
+    case GameState::GAME_WIN:
+    case GameState::GAME_LOSE: {
+        if (inputManager_.isKeyPressed(GLFW_KEY_ENTER) && !inputManager_.isKeyProcessed(GLFW_KEY_ENTER)) {
+            inputManager_.setProcessedKey(GLFW_KEY_ENTER);
+            gameState_ = GameState::GAME_MENU;
+        }
+        break;
+    }}
 }
 
 void Game::update(GLfloat delta) {
@@ -97,14 +114,6 @@ void Game::update(GLfloat delta) {
     ball_->update(delta);
     particleEmitter_->update(delta, *ball_, 5, glm::vec2(ball_->radius() / 2));
     this->checkCollisions();
-
-    if (ball_->position().y >= window_->height() - ball_->size().y) {
-        lives_--;
-        if (lives_ < 0) {
-            this->reset();
-            gameState_ = GameState::GAME_MENU;
-        }
-    }
 
     if (shakeTime > 0.0f) {
         shakeTime -= delta;
@@ -116,20 +125,34 @@ void Game::update(GLfloat delta) {
     for (auto& powerUp: powerUps_) {
         powerUp->update(delta, *player_.get(), *ball_.get(), *postProcessor_.get());
     }
-    powerUps_.erase(std::remove_if(powerUps_.begin(),
-            powerUps_.end(),
+    powerUps_.erase(std::remove_if(powerUps_.begin(), powerUps_.end(),
             [](std::unique_ptr<PowerUp> const& powerUp) { return powerUp->isDestroyed() && !powerUp->isActivated(); }
         ),
         powerUps_.end());
+
+    if (gameState_ == GameState::GAME_ACTIVE && levels_[currentLevel_]->isCompleted()) {
+        this->reset();
+        gameState_ = GameState::GAME_WIN;
+    }
+
+    if (ball_->position().y >= window_->height() - ball_->size().y) {
+        lives_--;
+        if (lives_ < 0) {
+            this->reset();
+            postProcessor_->enableEffects(PostProcessingEffect::Chaos);
+            gameState_ = GameState::GAME_LOSE;
+        }
+    }
 }
 
 void Game::render() {
-    if (gameState_ == GameState::GAME_MENU || gameState_ == GameState::GAME_ACTIVE) {
+    if (gameState_ == GameState::GAME_ACTIVE || gameState_ == GameState::GAME_MENU) {
         postProcessor_->beginRender();
 
         spriteRenderer_.renderSprite(resourceManager_.texture("background"),
             glm::vec2(0.0f, 0.0f),
-            glm::vec2(window_->width(), window_->height()));
+            glm::vec2(window_->width(), window_->height())
+        );
 
         levels_[currentLevel_]->render(spriteRenderer_);
         player_->render(spriteRenderer_);
@@ -141,16 +164,37 @@ void Game::render() {
                 powerUp->render(spriteRenderer_);
             }
         }
-
-        textRenderer_.renderText("Lives: " + std::to_string(lives_), glm::vec2(10.0f, 30.f) * scales_, glm::vec3(1.0f), 0.6f * glm::length(scales_));
-
-        postProcessor_->endRender();
-        postProcessor_->render((GLfloat)glfwGetTime(), glm::length(scales_));
     }
 
+    textRenderer_.renderText("Lives: " + std::to_string(lives_),
+        glm::vec2(10.0f, 30.f) * scales_,
+        glm::vec3(1.0f), 0.6f * glm::length(scales_));
+
+    postProcessor_->endRender();
+    postProcessor_->render(static_cast<GLfloat>(glfwGetTime()), glm::length(scales_));
+
     if (gameState_ == GameState::GAME_MENU) {
-        textRenderer_.renderText("Press ENTER to start", glm::vec2(GAME_WIDTH / 2 - 165, GAME_HEIGHT / 2) * scales_, glm::vec3(1.0f), 0.6f * glm::length(scales_));
-        textRenderer_.renderText("Press W or S to select level", glm::vec2(GAME_WIDTH / 2 - 155, GAME_HEIGHT / 2 + 20) * scales_, glm::vec3(1.0f), 0.4f * glm::length(scales_));
+        postProcessor_->disableEffects(PostProcessingEffect::Chaos);
+        textRenderer_.renderText("Press ENTER to start", 
+                                 glm::vec2(GAME_WIDTH / 2 - 165, GAME_HEIGHT / 2) * scales_, 
+                                 glm::vec3(1.0f), 0.6f * glm::length(scales_));
+        textRenderer_.renderText("Press W or S to select level", 
+                                 glm::vec2(GAME_WIDTH / 2 - 155, GAME_HEIGHT / 2 + 20) * scales_, 
+                                 glm::vec3(1.0f), 0.4f * glm::length(scales_));
+    } else if (gameState_ == GameState::GAME_WIN) {
+        textRenderer_.renderText("You WON!!!", 
+                                 glm::vec2(GAME_WIDTH / 2 - 80, GAME_HEIGHT / 2) * scales_, 
+                                 glm::vec3(0.0f, 1.0f, 0.0f), 0.7f * glm::length(scales_));
+        textRenderer_.renderText("Press ENTER to retry or ESC to quit", 
+                                 glm::vec2(GAME_WIDTH / 2 - 180, GAME_HEIGHT / 2 + 20) * scales_, 
+                                 glm::vec3(1.0f, 1.0f, 0.0f), 0.4f * glm::length(scales_));
+    } else if (gameState_ == GameState::GAME_LOSE) {
+        textRenderer_.renderText("You LOST...", 
+                                 glm::vec2(GAME_WIDTH / 2 - 80, GAME_HEIGHT / 2) * scales_, 
+                                 glm::vec3(1.0f, 0.0f, 0.0f), 0.7f * glm::length(scales_));
+        textRenderer_.renderText("Press ENTER to retry or ESC to quit", 
+                                 glm::vec2(GAME_WIDTH / 2 - 180, GAME_HEIGHT / 2 + 20) * scales_, 
+                                 glm::vec3(1.0f, 1.0f, 0.0f), 0.4f * glm::length(scales_));
     }
 
     window_->swapBuffers();
@@ -184,7 +228,6 @@ void Game::reset() {
 
     lives_ = LIVES;
 }
-
 
 bool Game::isExiting() const {
     return window_->isClosing();
@@ -251,8 +294,8 @@ void Game::initResources() {
         AssetsLoader::OFFSET + "resources/levels/4.txt", window_->width(), window_->height() / 2));
     currentLevel_ = 0;
 
-    glm::vec2 playerSize = PLAYER_SIZE * scales_;
-    glm::vec2 playerPosition = glm::vec2(
+    auto playerSize = PLAYER_SIZE * scales_;
+    auto playerPosition = glm::vec2(
         window_->width() / 2 - playerSize.x / 2,
         window_->height() - playerSize.y
     );
@@ -279,7 +322,7 @@ void Game::checkCollisions() {
     for (auto& brick : levels_[currentLevel_]->bricks()) {
         if (brick->isDestroyed()) continue;
 
-        Collision collision = CollisionDetector::checkCollision(*ball_, *brick.get());
+        auto collision = CollisionDetector::checkCollision(*ball_, *brick.get());
         if (!std::get<0>(collision)) continue;      // if there is no collision...
 
         if (brick->isSolid()) {
@@ -295,13 +338,13 @@ void Game::checkCollisions() {
         if (ball_->isPassingThrough()) continue;
 
         // Collision resolution
-        Direction direction = std::get<1>(collision);
-        glm::vec2 difference = std::get<2>(collision);
+        auto direction = std::get<1>(collision);
+        auto difference = std::get<2>(collision);
 
         if (direction == Direction::LEFT || direction == Direction::RIGHT) {
 			ball_->velocityX(-ball_->velocity().x);        // Reverse horizontal velocity
             // Relocate
-            float penetration = ball_->radius() - std::abs(difference.x);
+            auto penetration = ball_->radius() - std::abs(difference.x);
             if (direction == Direction::LEFT) {
 				ball_->updatePositionX(penetration);       // Move ball to right
             } else {
@@ -309,7 +352,7 @@ void Game::checkCollisions() {
             }
         } else {
             ball_->velocityY(-ball_->velocity().y);
-            float penetration = ball_->radius() - std::abs(difference.y);
+            auto penetration = ball_->radius() - std::abs(difference.y);
             if (direction == Direction::UP) {
 				ball_->updatePositionY(-penetration);      // Move ball back up
             } else {
@@ -319,16 +362,16 @@ void Game::checkCollisions() {
     }
 
     // check collision with the paddle
-    Collision collision = CollisionDetector::checkCollision(*ball_, *player_);
+    auto collision = CollisionDetector::checkCollision(*ball_, *player_);
     if (std::get<0>(collision) && !ball_->isStuck()) {
         audioManager_.playSource("bleepPaddle");
         // Check where it hit the board, and change velocity based on where it hit the board
-        float centerBoard = player_->position().x + player_->size().x / 2;
-        float distance = (ball_->position().x + ball_->radius()) - centerBoard;
-        float percentage = distance / (player_->size().x / 2);
+        auto centerBoard = player_->position().x + player_->size().x / 2;
+        auto distance = (ball_->position().x + ball_->radius()) - centerBoard;
+        auto percentage = distance / (player_->size().x / 2);
 
         // Then move accordingly
-        float strength = 2.0f;
+        auto strength = 2.0f;
         glm::vec2 oldVelocity = ball_->velocity();
         ball_->velocityX(INITIAL_BALL_VELOCITY.x * scales_.x * percentage * strength);
         ball_->velocityY(-1 * std::abs(ball_->velocity().y));
@@ -353,8 +396,8 @@ void Game::checkCollisions() {
 }
 
 void Game::spawnPowerUps(const Brick& brick) {
-    const glm::vec2 size = glm::vec2(60, 20) * scales_;
-    const glm::vec2 velocity = glm::vec2(0.0f, 150.0f) * scales_;
+    auto size = glm::vec2(60, 20) * scales_;
+    auto velocity = glm::vec2(0.0f, 150.0f) * scales_;
 
     if (Random::chance(50)) {   // 1 in 50 chance
         powerUps_.push_back(std::make_unique<PowerUp>(brick.position(), size, glm::vec3(0.5f, 0.5f, 1.0f), 
