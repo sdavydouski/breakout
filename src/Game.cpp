@@ -171,24 +171,24 @@ void Game::render() {
     if (gameState_ == GameState::GAME_MENU) {
         postProcessor_->disableEffects(PostProcessingEffect::Chaos);
         textRenderer_.renderText("Press ENTER to start", 
-                                 glm::vec2(GAME_WIDTH / 2 - 165, GAME_HEIGHT / 2) * scales_, 
+                                 glm::vec2(GAME_WIDTH / 2 - 240, GAME_HEIGHT / 2 - 20) * scales_, 
                                  glm::vec3(1.0f), 0.6f * glm::length(scales_));
         textRenderer_.renderText("Press W or S to select level", 
-                                 glm::vec2(GAME_WIDTH / 2 - 155, GAME_HEIGHT / 2 + 20) * scales_, 
+                                 glm::vec2(GAME_WIDTH / 2 - 215, GAME_HEIGHT / 2 + 20) * scales_, 
                                  glm::vec3(1.0f), 0.4f * glm::length(scales_));
     } else if (gameState_ == GameState::GAME_WIN) {
         textRenderer_.renderText("You WON!!!", 
-                                 glm::vec2(GAME_WIDTH / 2 - 80, GAME_HEIGHT / 2) * scales_, 
+                                 glm::vec2(GAME_WIDTH / 2 - 110, GAME_HEIGHT / 2) * scales_, 
                                  glm::vec3(0.0f, 1.0f, 0.0f), 0.7f * glm::length(scales_));
         textRenderer_.renderText("Press ENTER to retry or ESC to quit", 
-                                 glm::vec2(GAME_WIDTH / 2 - 180, GAME_HEIGHT / 2 + 20) * scales_, 
+                                 glm::vec2(GAME_WIDTH / 2 - 260, GAME_HEIGHT / 2 + 20) * scales_, 
                                  glm::vec3(1.0f, 1.0f, 0.0f), 0.4f * glm::length(scales_));
     } else if (gameState_ == GameState::GAME_LOSE) {
         textRenderer_.renderText("You LOST...", 
-                                 glm::vec2(GAME_WIDTH / 2 - 80, GAME_HEIGHT / 2) * scales_, 
+                                 glm::vec2(GAME_WIDTH / 2 - 110, GAME_HEIGHT / 2) * scales_, 
                                  glm::vec3(1.0f, 0.0f, 0.0f), 0.7f * glm::length(scales_));
         textRenderer_.renderText("Press ENTER to retry or ESC to quit", 
-                                 glm::vec2(GAME_WIDTH / 2 - 180, GAME_HEIGHT / 2 + 20) * scales_, 
+                                 glm::vec2(GAME_WIDTH / 2 - 260, GAME_HEIGHT / 2 + 20) * scales_, 
                                  glm::vec3(1.0f, 1.0f, 0.0f), 0.4f * glm::length(scales_));
     }
 
@@ -263,7 +263,7 @@ void Game::initResources() {
     auto textRenderingShader = resourceManager_.shaderProgram("text");
     textRenderingShader->use();
     textRenderingShader->setUniform("projection", projection);
-    textRenderer_.init(AssetsLoader::OFFSET + "resources/fonts/ocraext.ttf", textRenderingShader);
+    textRenderer_.init(AssetsLoader::OFFSET + "resources/fonts/PixelScreen.ttf", textRenderingShader);
 
     auto particleShader = resourceManager_.shaderProgram("particle");
     particleShader->use();
