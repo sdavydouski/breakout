@@ -1,5 +1,4 @@
 #include "Ball.h"
-#include <iostream>
 
 Ball::Ball(const glm::vec2 &position,
            float radius,
@@ -9,13 +8,9 @@ Ball::Ball(const glm::vec2 &position,
            const glm::vec4& boundaries)
     : GameObject(position, glm::vec2(2 * radius), color, sprite),
       radius_(radius), velocity_(velocity), isStuck_(true), isSticky_(false),
-      isPassingThrough_(false), boundaries_(boundaries) {
-    std::cout << "Ball constructor" << std::endl;
-}
+      isPassingThrough_(false), boundaries_(boundaries) {}
 
-Ball::~Ball() {
-    std::cout << "Ball destructor" << std::endl;
-}
+Ball::~Ball() {}
 
 void Ball::update(float delta) {
     if (isStuck_) return;

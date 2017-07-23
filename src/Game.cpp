@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "graphics/ShaderProgram.h"
+#include "graphics/PostProcessingEffect.h"
 #include "Window.h"
 #include "physics/Collision.h"
 #include "physics/Direction.h"
@@ -10,7 +11,6 @@
 #include "GLFW/glfw3.h"
 #include "AssetsLoader.h"
 #include <tuple>
-#include <iostream>
 #include <algorithm>
 
 const int GAME_WIDTH = 960;
@@ -28,8 +28,6 @@ GLfloat shakeTime = 0.0f;
 Game::Game(int width, int height, bool isFullScreen)
     : gameState_(GameState::GAME_MENU), lives_(LIVES), scales_(static_cast<float>(width) / GAME_WIDTH,
                                                                static_cast<float>(height) / GAME_HEIGHT) {
-    std::cout << "Game constructor" << std::endl;
-
     windowManager_.startUp();
     inputManager_.startUp();
     resourceManager_.startUp();
@@ -42,8 +40,6 @@ Game::Game(int width, int height, bool isFullScreen)
 }
 
 Game::~Game() {
-    std::cout << "Game destructor" << std::endl;
-
     audioManager_.shutDown();
     resourceManager_.shutDown();
     inputManager_.shutDown();
@@ -58,19 +54,18 @@ void Game::input(GLfloat delta) {
         if (inputManager_.isKeyPressed(GLFW_KEY_ENTER) && !inputManager_.isKeyProcessed(GLFW_KEY_ENTER)) {
             inputManager_.setProcessedKey(GLFW_KEY_ENTER);
             gameState_ = GameState::GAME_ACTIVE;
-        }
-        else if (inputManager_.isKeyPressed(GLFW_KEY_W) && !inputManager_.isKeyProcessed(GLFW_KEY_W)) {
+        } else if (inputManager_.isKeyPressed(GLFW_KEY_W) && !inputManager_.isKeyProcessed(GLFW_KEY_W)) {
             inputManager_.setProcessedKey(GLFW_KEY_W);
             currentLevel_ = (currentLevel_ + 1) % levels_.size();
-        }
-        else if (inputManager_.isKeyPressed(GLFW_KEY_S) && !inputManager_.isKeyProcessed(GLFW_KEY_S)) {
+        } else if (inputManager_.isKeyPressed(GLFW_KEY_UP) && !inputManager_.isKeyProcessed(GLFW_KEY_UP)) {
+            inputManager_.setProcessedKey(GLFW_KEY_UP);
+            currentLevel_ = (currentLevel_ + 1) % levels_.size();
+        } else if (inputManager_.isKeyPressed(GLFW_KEY_S) && !inputManager_.isKeyProcessed(GLFW_KEY_S)) {
             inputManager_.setProcessedKey(GLFW_KEY_S);
-            if (currentLevel_ > 0) {
-                currentLevel_--;
-            }
-            else {
-                currentLevel_ = levels_.size() - 1;
-            }
+            currentLevel_ = currentLevel_ > 0 ? --currentLevel_ : levels_.size() - 1;
+        } else if (inputManager_.isKeyPressed(GLFW_KEY_DOWN) && !inputManager_.isKeyProcessed(GLFW_KEY_DOWN)) {
+            inputManager_.setProcessedKey(GLFW_KEY_DOWN);
+            currentLevel_ = currentLevel_ > 0 ? --currentLevel_ : levels_.size() - 1;
         }
         break;
     }

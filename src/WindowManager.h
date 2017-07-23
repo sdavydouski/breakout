@@ -17,9 +17,4 @@ public:
                          bool vsync = true);
 private:
     std::vector<std::unique_ptr<Window>> windows_;
-
-    WindowManager();
-    ~WindowManager();
-
-friend Singleton;
 };

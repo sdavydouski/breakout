@@ -1,12 +1,9 @@
 #include "Texture.h"
 #include <GL/glew.h>
 #include <stb_image.h>
-#include <iostream>
 
-Texture::Texture(GLuint width, GLuint height, unsigned char *image, GLuint format)
+Texture::Texture(GLuint width, GLuint height, unsigned char* image, GLuint format)
     : width_(width), height_(height), format_(format) {
-    std::cout << "Texture constructor" << std::endl;
-
     glGenTextures(1, &id_);
 
     this->bind();
@@ -25,11 +22,9 @@ Texture::Texture(GLuint width, GLuint height, unsigned char *image, GLuint forma
 
 Texture::~Texture() {
     // Empty destructor
-    std::cout << "Texture destructor" << std::endl;
 }
 
 void Texture::destroy() {
-    std::cout << "Texture destroy()" << std::endl;
     glDeleteTextures(1, &id_);
 }
 

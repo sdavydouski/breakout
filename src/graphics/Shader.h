@@ -15,5 +15,5 @@ public:
 private:
     GLuint id_;
 
-    void checkCompilationStatus();
+    void checkCompilationStatus() const;
 };

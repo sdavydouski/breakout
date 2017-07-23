@@ -1,5 +1,5 @@
 #include "PowerUp.h"
-#include <iostream>
+#include "../graphics/PostProcessingEffect.h"
 
 PowerUp::PowerUp(const glm::vec2& position,
                  const glm::vec2& size,
@@ -9,14 +9,9 @@ PowerUp::PowerUp(const glm::vec2& position,
                  PowerUpType type,
                  GLfloat duration)
     : GameObject(position, size, color, sprite),
-      velocity_(velocity), type_(type), duration_(duration), isActivated_(false), isDestroyed_(false) {
-    std::cout << "PowerUp constructor" << std::endl;
+      velocity_(velocity), type_(type), duration_(duration), isActivated_(false), isDestroyed_(false) {}
 
-}
-
-PowerUp::~PowerUp() {
-    std::cout << "PowerUp destructor" << std::endl;
-}
+PowerUp::~PowerUp() {}
 
 void PowerUp::update(float delta, Player& player, Ball& ball, PostProcessor& postProcessor) {
     position_ += velocity_ * delta;

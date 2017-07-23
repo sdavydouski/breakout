@@ -19,17 +19,19 @@ public:
     void addKeyHandler(const std::string& name, KeyHandler keyHandler);
     void removeKeyHandler(const std::string& name);
 
-    bool isKeyPressed(int key);
-    bool isKeyProcessed(int key);
-    void setProcessedKey(int key);
+    bool isKeyPressed(int key) {
+        return keys_[key];
+    }
+
+    bool isKeyProcessed(int key) {
+        return processedKeys_[key];
+    }
+
+    void setProcessedKey(int key) {
+        processedKeys_[key] = true;
+    }
 private:
     std::map<std::string, KeyHandler> keyHandlers_;
-    float delta_;
     bool keys_[NUMBER_OF_KEY_CODES];
     bool processedKeys_[NUMBER_OF_KEY_CODES];
-
-    InputManager();
-    ~InputManager();
-
-friend Singleton;
 };

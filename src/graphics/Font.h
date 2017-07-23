@@ -5,7 +5,7 @@
 #include <vector>
 
 using Font = struct {
-    const int size = 40;
+    float size = 40.0f;
     const int atlasWidth = 2048;
     const int atlasHeight = 2048;
     const int overSampleX = 4;

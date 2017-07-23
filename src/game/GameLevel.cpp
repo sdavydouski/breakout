@@ -7,15 +7,11 @@
 #include <iostream>
 
 GameLevel::GameLevel(const std::string& path, int levelWidth, int levelHeight) {
-    std::cout << "GameLevel constructor" << std::endl;
-
-    std::vector<std::vector<int>> tiles = this->loadTiles(path);
+    auto tiles = this->loadTiles(path);
     this->initLevel(tiles, levelWidth, levelHeight);
 }
 
-GameLevel::~GameLevel() {
-    std::cout << "GameLevel destructor" << std::endl;
-}
+GameLevel::~GameLevel() {}
 
 void GameLevel::render(SpriteRenderer& renderer) {
     for (auto& brick: bricks_) {
@@ -58,8 +54,8 @@ std::vector<std::vector<int>> GameLevel::loadTiles(const std::string &path) {
 }
 
 void GameLevel::initLevel(std::vector<std::vector<int>>& tiles, int levelWidth, int levelHeight) {
-    float tileWidth = (float) levelWidth / (float) tiles[0].size();
-    float tileHeight = (float) levelHeight / (float) tiles.size();
+    auto tileWidth = static_cast<float>(levelWidth) / tiles[0].size();
+    auto tileHeight = static_cast<float>(levelHeight) / tiles.size();
 
     for (unsigned int i = 0; i < tiles.size(); ++i) {
         for (unsigned int j = 0; j < tiles[0].size(); ++j) {

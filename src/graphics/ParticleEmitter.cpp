@@ -2,14 +2,11 @@
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <cstdlib>
-#include <iostream>
 
 ParticleEmitter::ParticleEmitter(ShaderProgram *shaderProgram,
                                  Texture *texture,
                                  GLuint amount)
     : shaderProgram_(shaderProgram), texture_(texture), amount_(amount), lastUsedParticle_(0) {
-    std::cout << "ParticleEmitter constructor" << std::endl;
-
     GLfloat quad[] = {
         0.0f, 1.0f, 0.0f, 1.0f,
         1.0f, 0.0f, 1.0f, 0.0f,
@@ -38,8 +35,6 @@ ParticleEmitter::ParticleEmitter(ShaderProgram *shaderProgram,
 }
 
 ParticleEmitter::~ParticleEmitter() {
-    std::cout << "ParticleEmitter destructor" << std::endl;
-
     glDeleteVertexArrays(1, &VAO_);
     glDeleteBuffers(1, &VBO_);
 }
@@ -49,7 +44,7 @@ void ParticleEmitter::update(float delta,
                              int newParticles,
                              const glm::vec2 offset) {
     // Add new particles
-    for (GLuint i = 0; i < newParticles; i++) {
+    for (auto i = 0; i < newParticles; i++) {
         int unusedParticle = this->getFirstUnusedParticle();
         this->respawnParticle(particles_[unusedParticle], object, offset);
     }
@@ -59,7 +54,7 @@ void ParticleEmitter::update(float delta,
         particle.lifespan -= delta;
         if (particle.lifespan > 0.0f) {
             particle.position -= particle.velocity * delta;
-            particle.color.a -= delta * 2.5;
+            particle.color.a -= delta * 2.5f;
         }
     }
 }
@@ -90,7 +85,7 @@ void ParticleEmitter::render(float scale) {
 
 GLuint ParticleEmitter::getFirstUnusedParticle() {
     // First search from last used particle, this will usually return almost instantly
-    for (GLuint i = lastUsedParticle_; i < amount_; i++) {
+    for (auto i = lastUsedParticle_; i < amount_; i++) {
         if (particles_[i].lifespan <= 0.0f) {
             lastUsedParticle_ = i;
             return i;
@@ -114,8 +109,8 @@ GLuint ParticleEmitter::getFirstUnusedParticle() {
 void ParticleEmitter::respawnParticle(Particle& particle,
                                       const Ball& object,
                                       const glm::vec2& offset) {
-    GLfloat random = ((rand() % 100) - 50) / 10.0f;
-    GLfloat color = (GLfloat) 0.5 + ((rand() % 100) / 100.0f);
+    auto random = ((rand() % 100) - 50) / 10.0f;
+    auto color = 0.5f + ((rand() % 100) / 100.0f);
     particle.position = object.position() + random + offset;
     particle.color = glm::vec4(color, color, color, 1.0f);
     particle.lifespan = 1.0f;

@@ -5,7 +5,7 @@
 // AABB - Circle collision
 Collision CollisionDetector::checkCollision(const Ball &ball, const GameObject &gameObject) {
     // Get center point circle first
-    glm::vec2 center = ball.position() + ball.radius();
+    auto center = ball.position() + ball.radius();
     // Calculate AABB info (center, half-extents)
     glm::vec2 aabbHalfExtents(gameObject.size().x / 2, gameObject.size().y / 2);
     glm::vec2 aabbCenter(
@@ -13,10 +13,10 @@ Collision CollisionDetector::checkCollision(const Ball &ball, const GameObject &
             gameObject.position().y + aabbHalfExtents.y
     );
     // Get difference vector between both centers
-    glm::vec2 difference = center - aabbCenter;
-    glm::vec2 clamped = glm::clamp(difference, -aabbHalfExtents, aabbHalfExtents);
+    auto difference = center - aabbCenter;
+    auto clamped = glm::clamp(difference, -aabbHalfExtents, aabbHalfExtents);
     // Add clamped value to AABB_center and we get the value of box closest to circle
-    glm::vec2 closest = aabbCenter + clamped;
+    auto closest = aabbCenter + clamped;
     // Retrieve vector between center circle and closest point AABB and check if length <= radius
     difference = closest - center;
 
@@ -26,13 +26,13 @@ Collision CollisionDetector::checkCollision(const Ball &ball, const GameObject &
 }
 
 // AABB - AABB collision
-bool CollisionDetector::checkCollision(const GameObject& gameObject1, const GameObject& gameObject2) {
+bool CollisionDetector::checkCollision(const GameObject& one, const GameObject& two) {
     // Collision x-axis
-    bool collisionX = gameObject1.position().x + gameObject1.size().x >= gameObject2.position().x &&
-                      gameObject2.position().x + gameObject2.size().x >= gameObject1.position().x;
+    auto collisionX = one.position().x + one.size().x >= two.position().x &&
+                      two.position().x + two.size().x >= one.position().x;
     // Collision y-axis
-    bool collisionY = gameObject1.position().y + gameObject1.size().y >= gameObject2.position().y &&
-                      gameObject2.position().y + gameObject2.size().y >= gameObject1.position().y;
+    auto collisionY = one.position().y + one.size().y >= two.position().y &&
+                      two.position().y + two.size().y >= one.position().y;
     // Collision only if on both axes
     return collisionX && collisionY;
 }
@@ -45,10 +45,10 @@ Direction CollisionDetector::getVectorDirection(const glm::vec2 &target) {
         glm::vec2(1.0f, 0.0f)	// right
     };
 
-    float max = 0.0f;
-    int bestMatch = -1;
-    for (int i = 0; i < compass->length(); i++) {
-        float dotProduct = glm::dot(glm::normalize(target), compass[i]);
+    auto max = 0.0f;
+    auto bestMatch = -1;
+    for (auto i = 0; i < compass->length(); i++) {
+        auto dotProduct = glm::dot(glm::normalize(target), compass[i]);
         if (dotProduct > max) {
             max = dotProduct;
             bestMatch = i;

@@ -10,9 +10,9 @@ public:
     static std::string readAsText(const std::string& path);
     static std::vector<unsigned char> readAsBinary(const std::string& path);
     static unsigned char* readImage(const std::string& path,
-                             GLint width,
-                             GLint height,
-                             GLint components,
-                             bool flip = false);
+                                    GLint width,
+                                    GLint height,
+                                    GLint components,
+                                    bool flip = false);
     static AudioFile readOggFile(const std::string& path);
 };

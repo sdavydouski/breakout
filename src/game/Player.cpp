@@ -1,5 +1,4 @@
 #include "Player.h"
-#include <iostream>
 
 Player::Player(const glm::vec2 &position,
                const glm::vec2 &size,
@@ -7,10 +6,6 @@ Player::Player(const glm::vec2 &position,
                Texture* sprite,
                float velocity,
                const glm::vec2& boundaries)
-    : GameObject(position, size, color, sprite), velocity_(velocity), boundaries_(boundaries) {
-    std::cout << "Player constructor" << std::endl;
-}
+    : GameObject(position, size, color, sprite), velocity_(velocity), boundaries_(boundaries) {}
 
-Player::~Player() {
-    std::cout << "Player destructor" << std::endl;
-}
+Player::~Player() {}

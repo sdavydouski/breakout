@@ -1,16 +1,6 @@
 #include "InputManager.h"
 #include "EventHandlers.h"
 #include <GLFW/glfw3.h>
-#include <iostream>
-#include <algorithm>
-
-InputManager::InputManager() {
-    std::cout << "InputManager constructor" << std::endl;
-}
-
-InputManager::~InputManager() {
-    std::cout << "InputManager destructor" << std::endl;
-}
 
 void InputManager::startUp() {
     // For consistency
@@ -21,11 +11,10 @@ void InputManager::shutDown() {
 }
 
 void InputManager::pollEvents(float delta) {
-    delta_ = delta;
     glfwPollEvents();
 
     for (const auto& keyHandler : keyHandlers_) {
-        keyHandler.second(delta_);
+        keyHandler.second(delta);
     }
 }
 
@@ -45,17 +34,3 @@ void InputManager::addKeyHandler(const std::string& name, KeyHandler keyHandler)
 void InputManager::removeKeyHandler(const std::string& name) {
     keyHandlers_.erase(name);
 }
-
-bool InputManager::isKeyPressed(int key) {
-    return keys_[key];
-}
-
-bool InputManager::isKeyProcessed(int key) {
-    return processedKeys_[key];
-}
-
-
-void InputManager::setProcessedKey(int key) {
-    processedKeys_[key] = true;
-}
-

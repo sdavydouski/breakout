@@ -8,7 +8,7 @@
 #include <sstream>
 
 std::string FileManager::readAsText(const std::string &path) {
-    std::string content{""};
+    std::string content = "";
     std::ifstream file(path);
 
     if (file.is_open()) {

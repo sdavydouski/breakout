@@ -8,13 +8,11 @@
 #include <stdexcept>
 
 Shader::Shader(ShaderType type, const std::string& path) {
-    std::cout << "Shader constructor" << std::endl;
-
-    std::string source = FileManager::readAsText(path);
+    auto source = FileManager::readAsText(path);
 
     id_ = glCreateShader(type);
 
-    const GLchar* shaderSource = source.c_str();
+    auto shaderSource = source.c_str();
     glShaderSource(id_, 1, &shaderSource, nullptr);
     glCompileShader(id_);
 
@@ -22,11 +20,10 @@ Shader::Shader(ShaderType type, const std::string& path) {
 }
 
 Shader::~Shader() {
-    std::cout << "Shader destructor" << std::endl;
     glDeleteShader(id_);
 }
 
-void Shader::checkCompilationStatus() {
+void Shader::checkCompilationStatus() const {
     GLint success;
     glGetShaderiv(id_, GL_COMPILE_STATUS, &success);
 
@@ -34,7 +31,7 @@ void Shader::checkCompilationStatus() {
         GLint LOG_LENGTH;
         glGetShaderiv(id_, GL_INFO_LOG_LENGTH, &LOG_LENGTH);
 
-        std::vector<GLchar> errorLog((GLuint) LOG_LENGTH);
+        std::vector<GLchar> errorLog(static_cast<GLuint>(LOG_LENGTH));
 
         glGetShaderInfoLog(id_, LOG_LENGTH, nullptr, &errorLog[0]);
         std::cerr << &errorLog[0] << std::endl;

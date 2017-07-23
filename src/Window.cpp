@@ -4,9 +4,7 @@
 
 Window::Window(int width, int height, const std::string& title, bool isFullScreen, bool vsync)
     : width_(width), height_(height), title_(title), isFullScreen_(isFullScreen), vsync_(vsync) {
-    std::cout << "Window constructor" << std::endl;
-
-    GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
+    auto primaryMonitor = glfwGetPrimaryMonitor();
 
     window_ = isFullScreen ?
                   glfwCreateWindow(width, height, title.c_str(), primaryMonitor, nullptr) :
@@ -44,15 +42,14 @@ Window::Window(int width, int height, const std::string& title, bool isFullScree
 
 Window::~Window() {
     // Empty destructor
-    std::cout << "Window destructor" << std::endl;
 }
 
 void Window::destroy() {
     glfwDestroyWindow(window_);
 }
 
-bool Window::isClosing() {
-    return (bool) glfwWindowShouldClose(window_);
+bool Window::isClosing() const {
+    return static_cast<bool>(glfwWindowShouldClose(window_));
 }
 
 void Window::setIsShouldClose(bool isShouldClose) {

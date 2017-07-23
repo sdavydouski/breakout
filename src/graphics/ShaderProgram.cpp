@@ -7,8 +7,6 @@
 #include <vector>
 
 ShaderProgram::ShaderProgram(const Shader& vertexShader, const Shader& fragmentShader) {
-    std::cout << "ShaderProgram constructor" << std::endl;
-
     id_ = glCreateProgram();
 
     glAttachShader(id_, vertexShader.id());
@@ -21,11 +19,9 @@ ShaderProgram::ShaderProgram(const Shader& vertexShader, const Shader& fragmentS
 
 ShaderProgram::~ShaderProgram() {
     // Empty destructor
-    std::cout << "ShaderProgram destructor" << std::endl;
 }
 
 void ShaderProgram::destroy() {
-    std::cout << "ShaderProgram destroy()" << std::endl;
     this->end();
     glDeleteProgram(id_);
 }
@@ -118,7 +114,7 @@ void ShaderProgram::setUniform(const std::string& name, GLsizei count, const glm
     glUniformMatrix4fv(this->getUniformLocation(name), count, GL_FALSE, &values[0][0].x);
 }
 
-void ShaderProgram::checkLinkageStatus() {
+void ShaderProgram::checkLinkageStatus() const {
     GLint success;
     glGetProgramiv(id_, GL_LINK_STATUS, &success);
 
@@ -134,8 +130,8 @@ void ShaderProgram::checkLinkageStatus() {
     }
 }
 
-GLint ShaderProgram::getUniformLocation(const std::string& name) {
-    GLint location = glGetUniformLocation(id_, name.c_str());
+GLint ShaderProgram::getUniformLocation(const std::string& name) const {
+    auto location = glGetUniformLocation(id_, name.c_str());
 
     if (location == -1) {
         std::cerr << "Unable to find uniform " << name

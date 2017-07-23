@@ -1,20 +1,11 @@
 #include "WindowManager.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include <stdexcept>
-
-WindowManager::WindowManager() {
-    std::cout << "WindowManager constructor" << std::endl;
-}
-
-WindowManager::~WindowManager() {
-    std::cout << "WindowManager destructor" << std::endl;
-}
 
 void WindowManager::startUp() {
     // Setup error handling
     glfwSetErrorCallback([](int errorCode, const char* description) -> void {
-        throw std::runtime_error(description);
+        std::cerr << description << std::endl;
     });
 
     std::cout << glfwGetVersionString() << std::endl;

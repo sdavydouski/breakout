@@ -4,16 +4,6 @@
 #include "graphics/Texture.h"
 #include "utils/FileManager.h"
 #include <memory>
-#include <string>
-#include <iostream>
-
-ResourceManager::ResourceManager() {
-    std::cout << "ResourceManager constructor" << std::endl;
-}
-
-ResourceManager::~ResourceManager() {
-    std::cout << "ResourceManager destructor" << std::endl;
-}
 
 void ResourceManager::startUp() {
     // For consistency
@@ -44,7 +34,7 @@ Texture* ResourceManager::createTexture(const std::string& name,
                                         GLuint height,
                                         GLint channels,
                                         GLuint format) {
-    unsigned char *image = FileManager::readImage(path, width, height, channels);
+    auto image = FileManager::readImage(path, width, height, channels);
 
     textures_[name] = std::unique_ptr<Texture>(
         new Texture(width, height, image, format)

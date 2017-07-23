@@ -38,8 +38,8 @@ private:
     ShaderProgram(const Shader& vertexShader, const Shader& fragmentShader);
     void destroy();
 
-    void checkLinkageStatus();
-    GLint getUniformLocation(const std::string& name);
+    void checkLinkageStatus() const;
+    GLint getUniformLocation(const std::string& name) const;
 
 friend class ResourceManager;
 };

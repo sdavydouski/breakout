@@ -1,15 +1,10 @@
 #include "SpriteRenderer.h"
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <iostream>
 
-SpriteRenderer::SpriteRenderer() {
-    std::cout << "SpriteRenderer constructor" << std::endl;
-}
+SpriteRenderer::SpriteRenderer() {}
 
 SpriteRenderer::~SpriteRenderer() {
-    std::cout << "SpriteRenderer destructor" << std::endl;
-
     glDeleteVertexArrays(1, &VAO_);
     glDeleteBuffers(1, &VBO_);
 }

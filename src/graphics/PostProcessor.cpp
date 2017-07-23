@@ -1,11 +1,11 @@
 #include "PostProcessor.h"
+#include "PostProcessingEffect.h"
 #include <glm/vec2.hpp>
 #include <stdexcept>
 #include <iostream>
 
 PostProcessor::PostProcessor(ShaderProgram *shaderProgram, GLuint width, GLuint height)
     : shaderProgram_(shaderProgram), width_(width), height_(height), effects_(0) {
-    std::cout << "PostProcessor constructor" << std::endl;
 
     this->initFBOs();
     this->initVAO();
@@ -13,8 +13,6 @@ PostProcessor::PostProcessor(ShaderProgram *shaderProgram, GLuint width, GLuint 
 }
 
 PostProcessor::~PostProcessor() {
-    std::cout << "PostProcessor destructor" << std::endl;
-
     glDeleteFramebuffers(1, &MSFBO_);
     glDeleteFramebuffers(1, &FBO_);
     glDeleteRenderbuffers(1, &RBO_);
@@ -23,13 +21,13 @@ PostProcessor::~PostProcessor() {
     glDeleteBuffers(1, &VBO_);
 }
 
-void PostProcessor::beginRender() {
+void PostProcessor::beginRender() const {
     glBindFramebuffer(GL_FRAMEBUFFER, MSFBO_);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void PostProcessor::endRender() {
+void PostProcessor::endRender() const {
     // Now resolve multisampled color-buffer into intermediate FBO to store to texture
     glBindFramebuffer(GL_READ_FRAMEBUFFER, MSFBO_);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, FBO_);
@@ -136,7 +134,7 @@ void PostProcessor::initShaderUniforms() {
 
     shaderProgram_->setUniform("scene", 0);
 
-    GLfloat offset = 1.0f / 300.0f;     // just random offset
+    auto offset = 1.0f / 300.0f;     // just random offset
     glm::vec2 offsets[] = {
         { -offset,  offset  },  // top-left
         {  0.0f,    offset  },  // top-center

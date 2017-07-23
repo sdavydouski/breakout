@@ -18,10 +18,4 @@ private:
     ALCcontext* context_;
     // key: <source, buffer>
     std::map<std::string, std::pair<ALuint, ALuint>> sources_;
-
-    AudioManager();
-    ~AudioManager();
-
-friend Singleton;
-
 };

@@ -6,7 +6,7 @@
 class Window {
 public:
     ~Window();
-    bool isClosing();
+    bool isClosing() const;
     void setIsShouldClose(bool isShouldClose);
     void makeContextCurrent();
     void swapBuffers();

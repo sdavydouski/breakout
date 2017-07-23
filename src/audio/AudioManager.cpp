@@ -3,14 +3,6 @@
 #include "../utils/FileManager.h"
 #include <iostream>
 
-AudioManager::AudioManager() {
-    std::cout << "AudioManager constructor" << std::endl;
-}
-
-AudioManager::~AudioManager() {
-    std::cout << "AudioManager destructor" << std::endl;
-}
-
 void AudioManager::startUp() {
     device_ = alcOpenDevice(nullptr);
     if (!device_) {
@@ -32,7 +24,7 @@ void AudioManager::shutDown() {
 }
 
 void AudioManager::createSource(const std::string& name, const std::string& path, bool isLooping) {
-    AudioFile audioFile = FileManager::readOggFile(path);
+    auto audioFile = FileManager::readOggFile(path);
     ALuint source, buffer;
 
     alGenSources(1, &source);
@@ -48,6 +40,6 @@ void AudioManager::createSource(const std::string& name, const std::string& path
 }
 
 void AudioManager::playSource(const std::string& name) {
-    ALuint source = sources_[name].first;
+    auto source = sources_[name].first;
     alSourcePlay(source);
 }

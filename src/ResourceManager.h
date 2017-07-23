@@ -36,9 +36,4 @@ public:
 private:
     std::map<std::string, std::unique_ptr<ShaderProgram>> shaderPrograms_;
     std::map<std::string, std::unique_ptr<Texture>> textures_;
-
-    ResourceManager();
-    ~ResourceManager();
-
-friend Singleton;
 };

@@ -3,7 +3,6 @@
 #include <GL/glew.h>
 #include "ShaderProgram.h"
 #include "Texture.h"
-#include "PostProcessingEffect.h"
 
 class PostProcessor {
 public:
@@ -11,9 +10,9 @@ public:
     ~PostProcessor();
 
     // Prepares the postprocessor's framebuffer operations before rendering the game
-    void beginRender();
+    void beginRender() const;
     // Should be called after rendering the game, so it stores all the rendered data into a texture object
-    void endRender();
+    void endRender() const;
     // Renders the PostProcessor texture quad (as a screen-encompassing large sprite)
     void render(GLfloat delta, GLfloat scale);
 
