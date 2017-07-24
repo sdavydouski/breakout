@@ -44,13 +44,10 @@ void TextRenderer::renderText(const std::string& text, const glm::vec2& position
         auto yPosition = position.y;
         
         GLfloat vertices[] = {
-            xPosition,         yPosition,          glyph.uvs[0].x, glyph.uvs[0].y,
-            xPosition + width, yPosition - height, glyph.uvs[1].x, glyph.uvs[1].y,
             xPosition,         yPosition - height, glyph.uvs[0].x, glyph.uvs[1].y,
-
             xPosition,         yPosition,          glyph.uvs[0].x, glyph.uvs[0].y,
-            xPosition + width, yPosition,          glyph.uvs[1].x, glyph.uvs[0].y,
             xPosition + width, yPosition - height, glyph.uvs[1].x, glyph.uvs[1].y,
+            xPosition + width, yPosition,          glyph.uvs[1].x, glyph.uvs[0].y
         };
 
         glBufferSubData(GL_ARRAY_BUFFER, sizeof(vertices) * i, sizeof(vertices), vertices);
@@ -60,7 +57,7 @@ void TextRenderer::renderText(const std::string& text, const glm::vec2& position
     }
 
     // Render quads
-    glDrawArrays(GL_TRIANGLES, 0, 6 * text.length());
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4 * text.length());
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);

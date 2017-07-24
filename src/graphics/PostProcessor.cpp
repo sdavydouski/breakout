@@ -48,7 +48,7 @@ void PostProcessor::render(GLfloat time, GLfloat scale) {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureId_);
     glBindVertexArray(VAO_);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glBindVertexArray(0);
 }
 
@@ -108,12 +108,9 @@ void PostProcessor::initTexture() {
 void PostProcessor::initVAO() {
     GLfloat quad[] = {
         -1.0f, -1.0f, 0.0f, 0.0f,
-        1.0f,  1.0f, 1.0f, 1.0f,
-        -1.0f,  1.0f, 0.0f, 1.0f,
-
-        -1.0f, -1.0f, 0.0f, 0.0f,
         1.0f, -1.0f, 1.0f, 0.0f,
-        1.0f,  1.0f, 1.0f, 1.0f
+        -1.0f,  1.0f, 0.0f, 1.0f,
+        1.0f,  1.0f, 1.0f, 1.0f,
     };
 
     glGenVertexArrays(1, &VAO_);

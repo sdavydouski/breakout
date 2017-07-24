@@ -8,13 +8,10 @@ ParticleEmitter::ParticleEmitter(ShaderProgram *shaderProgram,
                                  GLuint amount)
     : shaderProgram_(shaderProgram), texture_(texture), amount_(amount), lastUsedParticle_(0) {
     GLfloat quad[] = {
+        0.0f, 0.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f, 1.0f,
         1.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 0.0f,
-
-        0.0f, 1.0f, 0.0f, 1.0f,
-        1.0f, 1.0f, 1.0f, 1.0f,
-        1.0f, 0.0f, 1.0f, 0.0f
+        1.0f, 1.0f, 1.0f, 1.0f
     };
 
     glGenVertexArrays(1, &VAO_);
@@ -73,7 +70,7 @@ void ParticleEmitter::render(float scale) {
             shaderProgram_->setUniform("particleColor", particle.color);
             texture_->bind();
             glBindVertexArray(VAO_);
-            glDrawArrays(GL_TRIANGLES, 0, 6);
+            glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
             glBindVertexArray(0);
         }
     }

@@ -14,13 +14,10 @@ void SpriteRenderer::init(ShaderProgram* shaderProgram) {
 
     GLfloat vertices[] = {
         // Pos      // Tex
+        0.0f, 0.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f, 1.0f,
         1.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 0.0f,
-
-        0.0f, 1.0f, 0.0f, 1.0f,
-        1.0f, 1.0f, 1.0f, 1.0f,
-        1.0f, 0.0f, 1.0f, 0.0f
+        1.0f, 1.0f, 1.0f, 1.0f
     };
 
     glGenVertexArrays(1, &VAO_);
@@ -57,7 +54,7 @@ void SpriteRenderer::renderSprite(const Texture* texture,
     texture->bind();
 
     glBindVertexArray(VAO_);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glBindVertexArray(0);
 
     shaderProgram_->end();
