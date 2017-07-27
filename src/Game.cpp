@@ -307,7 +307,7 @@ void Game::initResources() {
     ball_ = std::make_unique<Ball>(playerPosition + glm::vec2(playerSize.x / 2 - ballRadius, -2 * ballRadius),
                                    ballRadius,
                                    glm::vec3(1.0f),
-                                   resourceManager_.texture("face"),
+                                   resourceManager_.texture("ball"),
                                    INITIAL_BALL_VELOCITY * scales_,
                                    glm::vec4(0.0f, window_->width(), 0.0f, window_->height()));
 }
@@ -391,33 +391,33 @@ void Game::checkCollisions() {
 }
 
 void Game::spawnPowerUps(const Brick& brick) {
-    auto size = glm::vec2(60, 20) * scales_;
+    auto size = glm::vec2(30, 60) * scales_;
     auto velocity = glm::vec2(0.0f, 150.0f) * scales_;
 
     if (Random::chance(50)) {   // 1 in 50 chance
         powerUps_.push_back(std::make_unique<PowerUp>(brick.position(), size, glm::vec3(0.5f, 0.5f, 1.0f), 
-            resourceManager_.texture("speedUp"), velocity, PowerUpType::SpeedUp, 0.0f));
+            resourceManager_.texture("powerUp"), velocity, PowerUpType::SpeedUp, 0.0f));
     }
     if (Random::chance(50)) {
         powerUps_.push_back(std::make_unique<PowerUp>(brick.position(), size, glm::vec3(1.0f, 0.5f, 1.0f), 
-            resourceManager_.texture("sticky"), velocity, PowerUpType::Sticky, 20.0f));
+            resourceManager_.texture("powerUp"), velocity, PowerUpType::Sticky, 20.0f));
     }
     if (Random::chance(50)) {
         powerUps_.push_back(std::make_unique<PowerUp>(brick.position(), size, glm::vec3(0.5f, 1.0f, 0.5f), 
-            resourceManager_.texture("passThrough"), velocity, PowerUpType::PassThrough, 10.0f));
+            resourceManager_.texture("powerUp"), velocity, PowerUpType::PassThrough, 10.0f));
     }
     if (Random::chance(50)) {
         powerUps_.push_back(std::make_unique<PowerUp>(brick.position(), size, glm::vec3(1.0f, 0.6f, 0.4), 
-            resourceManager_.texture("padSizeIncrease"), velocity, PowerUpType::PadSizeIncrease, 0.0f));
+            resourceManager_.texture("powerUp"), velocity, PowerUpType::PadSizeIncrease, 0.0f));
     }
 
     // Negative powerups should spawn more often
     if (Random::chance(15)) {
         powerUps_.push_back(std::make_unique<PowerUp>(brick.position(), size, glm::vec3(1.0f, 0.3f, 0.3f), 
-            resourceManager_.texture("confuse"), velocity, PowerUpType::Confuse, 15.0f));
+            resourceManager_.texture("powerUp"), velocity, PowerUpType::Confuse, 15.0f));
     }
     if (Random::chance(15)) {
         powerUps_.push_back(std::make_unique<PowerUp>(brick.position(), size, glm::vec3(0.9f, 0.25f, 0.25f), 
-            resourceManager_.texture("chaos"), velocity, PowerUpType::Chaos, 15.0f));
+            resourceManager_.texture("powerUp"), velocity, PowerUpType::Chaos, 15.0f));
     }
 }

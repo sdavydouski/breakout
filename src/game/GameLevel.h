@@ -20,6 +20,6 @@ public:
 private:
     std::vector<std::unique_ptr<Brick>> bricks_;
 
-    std::vector<std::vector<int>> loadTiles(const std::string& path);
+    std::vector<std::vector<int>> loadTiles(const std::string& path) const;
     void initLevel(std::vector<std::vector<int>>& tiles, int levelWidth, int levelHeight);
 };

@@ -43,3 +43,13 @@ void AudioManager::playSource(const std::string& name) {
     auto source = sources_[name].first;
     alSourcePlay(source);
 }
+
+void AudioManager::stopSource(const std::string& name) {
+    auto source = sources_[name].first;
+    alSourceStop(source);
+}
+
+void AudioManager::pauseSource(const std::string& name) {
+    auto source = sources_[name].first;
+    alSourcePause(source);
+}

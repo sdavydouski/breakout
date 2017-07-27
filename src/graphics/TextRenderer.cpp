@@ -28,8 +28,6 @@ void TextRenderer::renderText(const std::string& text, const glm::vec2& position
     glBindVertexArray(VAO_);
     glBindBuffer(GL_ARRAY_BUFFER, VBO_);
 
-    //todo: reset buffer;
-
     auto x = position.x;
     auto i = 0;
     
@@ -86,9 +84,6 @@ void TextRenderer::initFont(const std::string& path) {
 
     stbtt_fontinfo fontInfo;
     stbtt_InitFont(&fontInfo, &fontData.front(), 0);
-    
-    int ascent, descent, lineGap;
-    stbtt_GetFontVMetrics(&fontInfo, &ascent, &descent, &lineGap);
 
     glGenTextures(1, &textureId_);
     glBindTexture(GL_TEXTURE_2D, textureId_);

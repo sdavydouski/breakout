@@ -13,6 +13,8 @@ public:
 
     void createSource(const std::string& name, const std::string& path, bool isLooping);
     void playSource(const std::string& name);
+    void stopSource(const std::string& name);
+    void pauseSource(const std::string& name);
 private:
     ALCdevice* device_;
     ALCcontext* context_;

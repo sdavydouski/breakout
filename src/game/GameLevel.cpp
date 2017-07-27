@@ -3,6 +3,7 @@
 #include "../ResourceManager.h"
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
+#include <cstdlib>
 #include <sstream>
 #include <iostream>
 
@@ -35,7 +36,7 @@ bool GameLevel::isCompleted() {
     return true;
 }
 
-std::vector<std::vector<int>> GameLevel::loadTiles(const std::string &path) {
+std::vector<std::vector<int>> GameLevel::loadTiles(const std::string& path) const {
     std::vector<std::vector<int>> tiles;
 
     int tile;
@@ -57,36 +58,31 @@ void GameLevel::initLevel(std::vector<std::vector<int>>& tiles, int levelWidth, 
     auto tileWidth = static_cast<float>(levelWidth) / tiles[0].size();
     auto tileHeight = static_cast<float>(levelHeight) / tiles.size();
 
-    for (unsigned int i = 0; i < tiles.size(); ++i) {
-        for (unsigned int j = 0; j < tiles[0].size(); ++j) {
+    for (auto i = 0; i < tiles.size(); ++i) {
+        for (auto j = 0; j < tiles[0].size(); ++j) {
             glm::vec2 position(tileWidth * j, tileHeight * i);
             glm::vec2 size(tileWidth, tileHeight);
 
             switch (tiles[i][j]) {
             case 1:
                 bricks_.push_back(std::make_unique<Brick>(position, size, glm::vec3(0.8f, 0.8f, 0.7f),
-                                                          ResourceManager::Instance().texture("block_solid"),
-                                                          true));
+                    ResourceManager::Instance().texture("block_solid"), true));
                 break;
             case 2:
                 bricks_.push_back(std::make_unique<Brick>(position, size, glm::vec3(0.2f, 0.6f, 1.0f),
-                                                          ResourceManager::Instance().texture("block"),
-                                                          false));
+                    ResourceManager::Instance().texture(rand() > RAND_MAX / 2 ? "block1" : "block2"), false));
                 break;
             case 3:
                 bricks_.push_back(std::make_unique<Brick>(position, size, glm::vec3(0.0f, 0.7f, 0.0f),
-                                                          ResourceManager::Instance().texture("block"),
-                                                          false));
+                    ResourceManager::Instance().texture(rand() > RAND_MAX / 2 ? "block1" : "block2"), false));
                 break;
             case 4:
                 bricks_.push_back(std::make_unique<Brick>(position, size, glm::vec3(0.8f, 0.8f, 0.4f),
-                                                          ResourceManager::Instance().texture("block"),
-                                                          false));
+                    ResourceManager::Instance().texture(rand() > RAND_MAX / 2 ? "block1" : "block2"), false));
                 break;
             case 5:
                 bricks_.push_back(std::make_unique<Brick>(position, size, glm::vec3(1.0f, 0.5f, 0.0f),
-                                                          ResourceManager::Instance().texture("block"),
-                                                          false));
+                    ResourceManager::Instance().texture(rand() > RAND_MAX / 2 ? "block1" : "block2"), false));
                 break;
             default:
                 break;

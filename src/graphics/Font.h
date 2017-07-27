@@ -1,7 +1,6 @@
 #pragma once
 
 #include "stb_truetype.h"
-#include <GL/glew.h>
 #include <vector>
 
 using Font = struct {
