@@ -45,7 +45,7 @@ void PowerUp::update(float delta, Player& player, Ball& ball, PostProcessor& pos
     }
 }
 
-void PowerUp::activate(Player& player, Ball& ball, PostProcessor& postProcessor, const glm::vec2 scales) {
+void PowerUp::activate(Player& player, Ball& ball, PostProcessor& postProcessor, const glm::vec2& scales) {
     isActivated_ = true;
     isDestroyed_ = true;
 

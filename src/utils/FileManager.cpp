@@ -47,7 +47,7 @@ unsigned char* FileManager::readImage(const std::string& path,
                                       GLint channels,
                                       bool flip) {
     stbi_set_flip_vertically_on_load(flip);
-    unsigned char* image = stbi_load(path.c_str(), &width, &height, &channels, 0);
+    auto image = stbi_load(path.c_str(), &width, &height, &channels, 0);
     if (image == nullptr) {
         std::cerr << "Unable to open image file " << path << std::endl
                   << "Reason: " << stbi_failure_reason() << std::endl;

@@ -5,7 +5,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <stdexcept>
 
 Shader::Shader(ShaderType type, const std::string& path) {
     auto source = FileManager::readAsText(path);
@@ -34,7 +33,6 @@ void Shader::checkCompilationStatus() const {
         std::vector<GLchar> errorLog(static_cast<GLuint>(LOG_LENGTH));
 
         glGetShaderInfoLog(id_, LOG_LENGTH, nullptr, &errorLog[0]);
-        std::cerr << &errorLog[0] << std::endl;
-        throw std::runtime_error("Shader compilation failed");
+        std::cerr << "Shader compilation failed" << std::endl << &errorLog[0] << std::endl;
     }
 }
