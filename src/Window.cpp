@@ -1,7 +1,6 @@
 #include "Window.h"
 #include "input/InputManager.h"
 #include "utils/FileManager.h"
-#include "AssetsLoader.h"
 #include <iostream>
 
 Window::Window(int width, int height, const std::string& title, bool isFullScreen, bool vsync)
@@ -17,12 +16,6 @@ Window::Window(int width, int height, const std::string& title, bool isFullScree
      }
 
     glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-    
-    GLFWimage icon;
-    icon.width = 58;
-    icon.height = 58;
-    icon.pixels = FileManager::readImage(AssetsLoader::OFFSET + "resources/textures/ball.png", icon.width, icon.height, 4);
-    glfwSetWindowIcon(window_, 1, &icon);
 
     if (!isFullScreen) {
         // Center window on screen

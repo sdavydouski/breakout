@@ -3,7 +3,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
-#include <stdexcept>
 #include <vector>
 
 ShaderProgram::ShaderProgram(const Shader& vertexShader, const Shader& fragmentShader) {
@@ -125,8 +124,7 @@ void ShaderProgram::checkLinkageStatus() const {
         std::vector<GLchar> errorLog((GLuint) LOG_LENGTH);
 
         glGetProgramInfoLog(id_, LOG_LENGTH, nullptr, &errorLog[0]);
-        std::cerr << &errorLog[0] << std::endl;
-        throw std::runtime_error("Shader program linkage failed");
+        std::cerr << "Shader program linkage failed" << std::endl << &errorLog[0] << std::endl;
     }
 }
 

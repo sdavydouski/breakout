@@ -54,14 +54,14 @@ void AssetsLoader::loadTextures() {
        96, 32, 4, GL_RGBA);
     ResourceManager::Instance().createTexture("particle",
        OFFSET + "resources/textures/particle.png",
-       500, 500, 4, GL_RGBA);
+       50, 50, 4, GL_RGBA);
     ResourceManager::Instance().createTexture("powerUp",
         OFFSET + "resources/textures/powerup.png",
         16, 32, 4, GL_RGBA);
 }
 
 void AssetsLoader::loadAudioFiles() {
-    // https://opengameart.org/content/cyberpunk-moonlight-sonata
+    // https://opengameart.org/content/tower-defense-theme
     AudioManager::Instance().createSource("background", OFFSET + "resources/audio/background.ogg", true);
     AudioManager::Instance().createSource("bleep", OFFSET + "resources/audio/bleep.ogg", false);
     AudioManager::Instance().createSource("bleepPaddle", OFFSET + "resources/audio/bleep_paddle.ogg", false);
