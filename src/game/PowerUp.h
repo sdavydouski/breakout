@@ -21,7 +21,7 @@ public:
     ~PowerUp();
 
     void update(float delta, Player& player, Ball& ball, PostProcessor& postProcessor);
-    void activate(Player& player, Ball& ball, PostProcessor& postProcessor, const glm::vec2 scales);
+    void activate(Player& player, Ball& ball, PostProcessor& postProcessor, const glm::vec2& scales);
 
     // getters
     PowerUpType type() const { return type_; }
