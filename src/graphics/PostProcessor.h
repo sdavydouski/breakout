@@ -6,7 +6,7 @@
 
 class PostProcessor {
 public:
-    PostProcessor(ShaderProgram* shaderProgram, GLuint width, GLuint height);
+    PostProcessor(ShaderProgram* shaderProgram, GLuint framebufferWidth, GLuint framebufferHeight);
     ~PostProcessor();
 
     // Prepares the postprocessor's framebuffer operations before rendering the game
@@ -22,8 +22,8 @@ private:
     ShaderProgram* shaderProgram_;
     Texture* texture_;
 
-    GLuint width_;
-    GLuint height_;
+    GLuint framebufferWidth_;
+    GLuint framebufferHeight_;
 
     int effects_;
 

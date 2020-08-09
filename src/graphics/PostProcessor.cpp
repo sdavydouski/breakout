@@ -4,8 +4,8 @@
 #include <stdexcept>
 #include <iostream>
 
-PostProcessor::PostProcessor(ShaderProgram *shaderProgram, GLuint width, GLuint height)
-    : shaderProgram_(shaderProgram), width_(width), height_(height), effects_(0) {
+PostProcessor::PostProcessor(ShaderProgram *shaderProgram, GLuint framebufferWidth, GLuint framebufferHeight)
+    : shaderProgram_(shaderProgram), framebufferWidth_(framebufferWidth), framebufferHeight_(framebufferHeight), effects_(0) {
 
     this->initFBOs();
     this->initVAO();
@@ -31,7 +31,7 @@ void PostProcessor::endRender() const {
     // Now resolve multisampled color-buffer into intermediate FBO to store to texture
     glBindFramebuffer(GL_READ_FRAMEBUFFER, MSFBO_);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, FBO_);
-    glBlitFramebuffer(0, 0, width_, height_, 0, 0, width_, height_, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    glBlitFramebuffer(0, 0, framebufferWidth_, framebufferHeight_, 0, 0, framebufferWidth_, framebufferHeight_, GL_COLOR_BUFFER_BIT, GL_NEAREST);
     // Binds both READ and WRITE framebuffer to default framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -74,7 +74,7 @@ void PostProcessor::initFBOs() {
     glBindFramebuffer(GL_FRAMEBUFFER, MSFBO_);
     glBindRenderbuffer(GL_RENDERBUFFER, RBO_);
     // Allocate storage for render buffer object
-    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 8, GL_RGB, width_, height_);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 8, GL_RGB, framebufferWidth_, framebufferHeight_);
     // Attach MS render buffer object to framebuffer
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, RBO_);
 
@@ -99,7 +99,7 @@ void PostProcessor::initFBOs() {
 void PostProcessor::initTexture() {
     glGenTextures(1, &textureId_);
     glBindTexture(GL_TEXTURE_2D, textureId_);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width_, height_, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, framebufferWidth_, framebufferHeight_, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glBindTexture(GL_TEXTURE_2D, 0);

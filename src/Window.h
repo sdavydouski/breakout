@@ -1,5 +1,6 @@
 #pragma once
 
+#include "graphics/Extent.h"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <string>
@@ -15,6 +16,7 @@ public:
     // getters
     int width() const { return width_; }
     int height() const { return height_; }
+    Extent getFramebufferSize() const;
 
 private:
     int width_;

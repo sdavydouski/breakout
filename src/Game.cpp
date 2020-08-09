@@ -276,8 +276,9 @@ void Game::initResources() {
     particleEmitter_ = std::make_unique<ParticleEmitter>(resourceManager_.shaderProgram("particle"),
                                                          resourceManager_.texture("particle"),
                                                          500);
+    auto framebufferSize = window_->getFramebufferSize();
     postProcessor_ = std::make_unique<PostProcessor>(resourceManager_.shaderProgram("postprocessing"),
-                                                     window_->width(), window_->height());
+                                                     framebufferSize.width, framebufferSize.height);
 
     levels_.push_back(std::make_unique<GameLevel>(
         AssetsLoader::OFFSET + "resources/levels/1.txt", window_->width(), window_->height() / 2));

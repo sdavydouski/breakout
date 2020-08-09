@@ -41,6 +41,13 @@ Window::Window(int width, int height, const std::string& title, bool isFullScree
     this->setupEventHandlers();
 }
 
+Extent Window::getFramebufferSize() const {
+  int framebufferWidth;
+  int framebufferHeight;
+  glfwGetFramebufferSize(window_, &framebufferWidth, &framebufferHeight);
+  return Extent{framebufferWidth, framebufferHeight};
+}
+
 Window::~Window() {
     // Empty destructor
 }
