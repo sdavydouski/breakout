@@ -1,6 +1,7 @@
 #pragma once
 
 #include <GL/glew.h>
+#include "Extent.h"
 #include "ShaderProgram.h"
 #include "Texture.h"
 
@@ -18,6 +19,10 @@ public:
 
     void enableEffects(int effects);
     void disableEffects(int effects);
+
+    // Recreate PostProcessor after window resize.
+    void resize(Extent framebufferSize);
+
 private:
     ShaderProgram* shaderProgram_;
     Texture* texture_;

@@ -141,23 +141,26 @@ void Game::update(GLfloat delta) {
 }
 
 void Game::render() {
-    if (gameState_ == GameState::GAME_ACTIVE || gameState_ == GameState::GAME_MENU) {
-        postProcessor_->beginRender();
+    if (window_->pollResize())
+    {
+        postProcessor_->resize(window_->getFramebufferSize());
+    }
 
-        spriteRenderer_.renderSprite(resourceManager_.texture("background"),
-            glm::vec2(0.0f, 0.0f),
-            glm::vec2(window_->width(), window_->height())
-        );
+    postProcessor_->beginRender();
 
-        levels_[currentLevel_]->render(spriteRenderer_);
-        player_->render(spriteRenderer_);
-        particleEmitter_->render(ball_->radius());
-        ball_->render(spriteRenderer_);
+    spriteRenderer_.renderSprite(resourceManager_.texture("background"),
+        glm::vec2(0.0f, 0.0f),
+        glm::vec2(window_->width(), window_->height())
+    );
 
-        for (auto& powerUp : powerUps_) {
-            if (!powerUp->isDestroyed()) {
-                powerUp->render(spriteRenderer_);
-            }
+    levels_[currentLevel_]->render(spriteRenderer_);
+    player_->render(spriteRenderer_);
+    particleEmitter_->render(ball_->radius());
+    ball_->render(spriteRenderer_);
+
+    for (auto& powerUp : powerUps_) {
+        if (!powerUp->isDestroyed()) {
+            powerUp->render(spriteRenderer_);
         }
     }
 

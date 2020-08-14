@@ -161,3 +161,15 @@ void PostProcessor::initShaderUniforms() {
 
     shaderProgram_->end();
 }
+
+void PostProcessor::resize(Extent framebufferSize)
+{
+    glDeleteFramebuffers(1, &MSFBO_);
+    glDeleteFramebuffers(1, &FBO_);
+    glDeleteRenderbuffers(1, &RBO_);
+    glDeleteTextures(1, &textureId_);
+
+    framebufferWidth_ = framebufferSize.width;
+    framebufferHeight_ = framebufferSize.height;
+    initFBOs();
+}
