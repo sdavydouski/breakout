@@ -38,7 +38,22 @@ Window::Window(int width, int height, const std::string& title, bool isFullScree
     glfwGetFramebufferSize(window_, &frameBufferWidth, &frameBufferHeight);
     glViewport(0, 0, frameBufferWidth, frameBufferHeight);
 
+    glfwSetWindowUserPointer(window_, this);
     this->setupEventHandlers();
+}
+
+Extent Window::getFramebufferSize() const {
+  int framebufferWidth;
+  int framebufferHeight;
+  glfwGetFramebufferSize(window_, &framebufferWidth, &framebufferHeight);
+  return Extent{framebufferWidth, framebufferHeight};
+}
+
+bool Window::pollResize()
+{
+    auto result = resized_;
+    resized_ = false;
+    return result;
 }
 
 Window::~Window() {
@@ -73,4 +88,11 @@ void Window::setupEventHandlers() {
                                                     int mods) {
         InputManager::Instance().processKeyEvent(key, scancode, action, mods);
     });
+    glfwSetFramebufferSizeCallback(window_, framebufferSizeCallback);
+}
+
+void Window::framebufferSizeCallback(GLFWwindow* window, int width, int height)
+{
+    auto this_ptr = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+    this_ptr->resized_ = true;
 }

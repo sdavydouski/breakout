@@ -1,12 +1,13 @@
 #pragma once
 
 #include <GL/glew.h>
+#include "Extent.h"
 #include "ShaderProgram.h"
 #include "Texture.h"
 
 class PostProcessor {
 public:
-    PostProcessor(ShaderProgram* shaderProgram, GLuint width, GLuint height);
+    PostProcessor(ShaderProgram* shaderProgram, GLuint framebufferWidth, GLuint framebufferHeight);
     ~PostProcessor();
 
     // Prepares the postprocessor's framebuffer operations before rendering the game
@@ -18,12 +19,16 @@ public:
 
     void enableEffects(int effects);
     void disableEffects(int effects);
+
+    // Recreate PostProcessor after window resize.
+    void resize(Extent framebufferSize);
+
 private:
     ShaderProgram* shaderProgram_;
     Texture* texture_;
 
-    GLuint width_;
-    GLuint height_;
+    GLuint framebufferWidth_;
+    GLuint framebufferHeight_;
 
     int effects_;
 

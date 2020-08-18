@@ -11,4 +11,4 @@ My first attempt to create a game in C++. This project is heavily influenced by 
 * background music - [https://opengameart.org/content/tower-defense-theme](https://opengameart.org/content/tower-defense-theme)
 
 #### Build
-All dependencies are presented as git submodules so you can simply download them and build the project. Tested on Visual C++ 14 and MinGW-w64 g++ compilers. Adjust `AssetsLoader::OFFSET` if needed. If you are a Windows user you can just [download](https://github.com/wiranoid/breakout/releases/download/1.0.0/breakout.zip) prebuilt game.
+All dependencies are presented as git submodules so you can simply download them and build the project. Tested on Visual C++ 14 and MinGW-w64 g++ compilers. Adjust `AssetsLoader::OFFSET` if needed. If you are a Windows user you can just [download](https://github.com/wiranoid/breakout/releases/download/1.0.0/breakout.zip) prebuilt game (commit 801d2c69900cbdc78cd19693414196a888308ab5).
